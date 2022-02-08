@@ -1,31 +1,31 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div class="app">
+    <el-config-provider :locale="zh">
+      <router-view></router-view>
+    </el-config-provider>
   </div>
-
-  <router-view />
 </template>
 
-<style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+<script lang="ts">
+import { defineComponent } from 'vue'
+import zh from 'element-plus/lib/locale/lang/zh-cn'
+export default defineComponent({
+  name: 'App',
+  props: {
+    name: {
+      type: String
+    }
+  },
+  setup() {
+    return {
+      zh
     }
   }
+})
+</script>
+
+<style lang="less">
+.app {
+  height: 100%;
 }
 </style>
