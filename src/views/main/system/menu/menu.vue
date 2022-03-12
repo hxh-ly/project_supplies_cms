@@ -1,6 +1,9 @@
 <template>
   <div class="menu">
-    <page-content :contentTableConfig="contentTableConfig" pageName="menu"></page-content>
+    <page-content
+      :contentTableConfig="contentTableConfig"
+      pageName="menu"
+    ></page-content>
   </div>
 </template>
 

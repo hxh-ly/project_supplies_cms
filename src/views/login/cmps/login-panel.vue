@@ -11,7 +11,7 @@
         </template>
         <login-account ref="acountRef" />
       </el-tab-pane>
-  <!--     <el-tab-pane name="phone">
+      <!--     <el-tab-pane name="phone">
         <template #label>
           <span>
             <el-icon><cellphone /></el-icon>手机登录
@@ -38,9 +38,10 @@ import loginPhone from './login-phone.vue'
 export default defineComponent({
   components: {
     Avatar,
-    Cellphone,
-    loginAccount,
-    loginPhone
+    loginAccount
+    /*  ,Cellphone,
+
+    loginPhone */
   },
   setup(props) {
     const isKeepWord = ref(true)

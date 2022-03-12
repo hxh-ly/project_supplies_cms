@@ -32,7 +32,13 @@
 import { defineComponent, ref, onMounted, computed } from 'vue'
 import { userStore } from '@/store'
 
-import { PieChart, RoseChart, LineChart, BarChart, MapChart } from '@/components/page-chart'
+import {
+  PieChart,
+  RoseChart,
+  LineChart,
+  BarChart,
+  MapChart
+} from '@/components/page-chart'
 import HyCard from '@/base-ui/card'
 export default defineComponent({
   name: 'dashboard',

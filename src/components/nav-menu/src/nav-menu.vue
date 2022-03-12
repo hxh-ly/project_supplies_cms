@@ -3,7 +3,7 @@
   <div class="nav-menu">
     <div class="logo">
       <img class="img" src="~@/assets/img/logo.svg" alt="" />
-      <span v-if="!isCollapsed" class="title">vue3+Ts</span>
+      <span v-if="!isCollapsed" class="title">物资后台管理系统</span>
     </div>
     <el-menu
       :default-active="defaultValue"
@@ -65,7 +65,7 @@ export default defineComponent({
     const router = useRouter()
     const curRoute = useRoute()
     const currentPath = curRoute.path
-  console.log(useMenus,currentPath);
+
 
     //data
     const menu = pathToMenu(useMenus.value, currentPath)
@@ -74,6 +74,9 @@ export default defineComponent({
     //handle
     const handleMenuItemClick = (item: any) => {
       console.log('--------')
+      console.log(item);
+
+       console.log('菜单栏左边菜单',useMenus, currentPath)
       router.push({
         path: item.url ?? '/not-found'
       })

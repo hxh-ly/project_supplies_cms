@@ -34,7 +34,9 @@ const login: Module<ILoginState, IRootStore> = {
       localCache.setItem('userInfo', LoginUserInfo)
       commit('changeUserInfo', LoginUserInfo)
       //3 菜单
-      const UserInfoMenuRes = await requestUserMenusRoleId(LoginUserInfo.role.id)
+      const UserInfoMenuRes = await requestUserMenusRoleId(
+        LoginUserInfo.role.id
+      )
       const userMenus = UserInfoMenuRes.data
       localCache.setItem('userMenus', userMenus)
       commit('changeUserMenus', userMenus)
@@ -75,10 +77,16 @@ const login: Module<ILoginState, IRootStore> = {
       //console.log('user菜单数据', userMenus)
       //Menus --> routes
       //将menus设在vuex时，
+      console.log('路由添加前',userMenus);
+
       const routes = mapMenuToRoutes(userMenus)
+      console.log('当前用于route组件',routes);
+
       routes.forEach((route) => {
         router.addRoute('main', route)
       })
+      console.log(router);
+
     }
   }
 }

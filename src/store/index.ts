@@ -28,10 +28,17 @@ const store = createStore<IRootStore>({
   },
   actions: {
     async getInitialDataAction({ commit }) {
-      const departMentResult = await getPageListData('/department/list', { offset: 0, size: 1000 })
+      /* const departMentResult = await getPageListData('/department/list', {
+        offset: 0,
+        size: 1000
+      }) */
+      const departMentResult = { data: { list: [] } }
       const { list: departmentList } = departMentResult.data
       commit('changeEntriesDepartMent', departmentList)
-      const RoleResult = await getPageListData('/role/list', { offset: 0, size: 1000 })
+      const RoleResult = await getPageListData('/role/list', {
+        offset: 0,
+        size: 1000
+      })
       const { list: roleList } = RoleResult.data
       commit('changeEntriesRole', roleList)
       const menuResult = await getPageListData('/menu/list', {})

@@ -21,18 +21,32 @@ module.exports = {
       }
     },
     devServer: {
-      proxy: {
+        proxy: {
         '^/api': {
           target: 'http://152.136.185.210:5000',
           pathRewrite: {
             '^/api': ''
           },
           changeOrigin: true
-        }
+        },
+        '^/dgut': {
+          target: 'http://119.91.237.88:8082',
+          pathRewrite: {
+            '^/dgut': ''
+          },
+          changeOrigin: true
+        },
+       /* '^/hxh': {
+          target: 'http://localhost:9002',
+          pathRewrite: {
+            '^/hxh': ''
+          },
+          changeOrigin: true
+        }, */
       }
     },
     plugins: [
-    /*   AutoImport({
+      /*   AutoImport({
         resolvers: [ElementPlusResolver()]
       }),
       Components({

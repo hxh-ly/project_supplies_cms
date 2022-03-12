@@ -43,22 +43,30 @@ export default defineComponent({
   setup() {
     /*1 页面自己的逻辑：添加显示哪些列表项 编辑显示哪些列表项 */
     const addDataFn = () => {
-      var obj = modelFormConfig.formItem.find((item) => item.field === 'password')
+      var obj = modelFormConfig.formItem.find(
+        (item) => item.field === 'password'
+      )
       obj!.isHidden = false
     }
     const editDataFn = () => {
-      var obj = modelFormConfig.formItem.find((item) => item.field === 'password')
+      var obj = modelFormConfig.formItem.find(
+        (item) => item.field === 'password'
+      )
       obj!.isHidden = true
     }
     //2 动态添加部门和角色列表
     const modelFormConfigRef = computed(() => {
       const store = userStore()
-      const departMentItem = modelFormConfig.formItem.find((item) => item.field === 'departmentId')
+      const departMentItem = modelFormConfig.formItem.find(
+        (item) => item.field === 'departmentId'
+      )
       departMentItem!.options = store.state.entriesDepartment.map((item) => ({
         title: item.name,
         value: item.id
       }))
-      const roleItem = modelFormConfig.formItem.find((item) => item.field === 'roleId')
+      const roleItem = modelFormConfig.formItem.find(
+        (item) => item.field === 'roleId'
+      )
       roleItem!.options = store.state.entriesRole.map((item) => ({
         title: item.name,
         value: item.id
@@ -68,10 +76,8 @@ export default defineComponent({
 
     //3 获取公共变量和函数
     const [pageContentRef, handleResetClick, handleQueryClick] = usePageSearch()
-    const [pageModalRef, defaultInfo, handleNewData, handleEditData] = usePageModal(
-      addDataFn,
-      editDataFn
-    )
+    const [pageModalRef, defaultInfo, handleNewData, handleEditData] =
+      usePageModal(addDataFn, editDataFn)
     return {
       searchFormConfig,
       contentTableConfig,

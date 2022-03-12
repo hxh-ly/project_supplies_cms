@@ -16,8 +16,19 @@
       @selection-change="handleSelectionChange"
       v-bind="childrenProps"
     >
-      <el-table-column v-if="isShowSelect" type="selection" width="80" align="center" />
-      <el-table-column v-if="isShowId" label="id" type="index" width="80" align="center" />
+      <el-table-column
+        v-if="isShowSelect"
+        type="selection"
+        width="80"
+        align="center"
+      />
+      <el-table-column
+        v-if="isShowId"
+        label="id"
+        type="index"
+        width="80"
+        align="center"
+      />
 
       <template v-for="item in propList" :key="item.prop">
         <el-table-column align="center" v-bind="item" show-overflow-tooltip>

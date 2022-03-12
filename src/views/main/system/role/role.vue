@@ -62,10 +62,8 @@ export default defineComponent({
       })
     }
     const [pageContentRef, handleResetClick, handleQueryClick] = usePageSearch()
-    const [pageModalRef, defaultInfo, handleNewData, handleEditData] = usePageModal(
-      undefined,
-      editCallback
-    )
+    const [pageModalRef, defaultInfo, handleNewData, handleEditData] =
+      usePageModal(undefined, editCallback)
 
     console.log(store.state.entriesMenu)
     /* 请求角色数据 */

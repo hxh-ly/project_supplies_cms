@@ -59,7 +59,7 @@ export default defineComponent({
 <style scoped lang="less">
 .page-search {
   .title {
-    color: red;
+    color: #409eff;
   }
   .right-btn {
     text-align: right;

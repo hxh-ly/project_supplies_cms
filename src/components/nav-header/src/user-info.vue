@@ -16,7 +16,9 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="handleExitClick">退出登录</el-dropdown-item>
+            <el-dropdown-item @click="handleExitClick"
+              >退出登录</el-dropdown-item
+            >
             <el-dropdown-item divided>Action 5</el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -32,7 +34,7 @@ import localCache from '@/util/cache'
 import { useRouter } from 'vue-router'
 export default defineComponent({
   components: {
-   /*  ArrowDown,
+    /*  ArrowDown,
     Avatar,
     ChatDotRound,
     Bell,

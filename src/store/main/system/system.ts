@@ -7,6 +7,7 @@ import {
   createPageData,
   editPageData
 } from '@/serve/main/system/system'
+import { dgut_getMaterialListData } from '@/serve/DgutRequest/dgutRequest'
 const system: Module<ISystemState, IRootStore> = {
   namespaced: true,
   state: () => {
@@ -18,19 +19,36 @@ const system: Module<ISystemState, IRootStore> = {
       goodsList: [],
       goodsCount: 0,
       menuList: [],
-      menuCount: 0
+      menuCount: 0,
+      materialList: [],
+      materialCount: 0
     }
   },
   actions: {
     async getPageListAction({ commit }, payload: any) {
       const pageName = payload.pageName
       const pageUrl = `${pageName}/list`
-      //网络请求
-      const pageResult = await getPageListData(pageUrl, payload.queryInfo)
-      const { list, totalCount } = pageResult.data
-      const changePageName = pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
-      commit(`change${changePageName}List`, list)
-      commit(`change${changePageName}Count`, totalCount)
+      let pageResult = null
+      //毕设
+      if (payload.isDgut) {
+        
+        pageResult = await dgut_getMaterialListData(pageUrl, payload.queryInfo)
+        const list = pageResult.data.materialsPage.records
+        const totalCount = pageResult.data.materialsPage.records.length
+        console.log('请求得到吗！！！！', pageResult)
+        const changePageName =
+          pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
+        commit(`change${changePageName}List`, list)
+        commit(`change${changePageName}Count`, totalCount)
+      } else {
+        //网络请求
+        pageResult = await getPageListData(pageUrl, payload.queryInfo)
+        const { list, totalCount } = pageResult.data
+        const changePageName =
+          pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
+        commit(`change${changePageName}List`, list)
+        commit(`change${changePageName}Count`, totalCount)
+      }
     },
     async deletePageData(context, playload: any) {
       const { pageName, id } = playload
@@ -93,6 +111,12 @@ const system: Module<ISystemState, IRootStore> = {
     },
     changeMenuCount(state, data: any) {
       state.menuCount = data
+    },
+    changeMaterialList(state, data: any) {
+      state.materialList = data
+    },
+    changeMaterialCount(state, data: any) {
+      state.materialCount = data
     }
   },
   getters: {

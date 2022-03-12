@@ -6,8 +6,8 @@ const rules = {
       trigger: 'blur'
     },
     {
-      pattern: /^[a-z0-9]{6,12}$/,
-      message: '长度为6-12个数字或者字符',
+      pattern: /^[a-z0-9]{5,12}$/,
+      message: '长度为5-12个数字或者字符',
       trigger: 'blur'
     }
   ],
