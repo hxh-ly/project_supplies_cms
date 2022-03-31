@@ -21,6 +21,8 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'off',
     'no-use-before-define': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-non-null-assertion': 'off'
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    'vue/no-unused-components': 'off' // 不使用不报错
   }
 }
