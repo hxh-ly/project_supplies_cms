@@ -12,7 +12,7 @@ export const searchFormConfig: IForm = {
       field: 'unitPrice',
       type: 'input',
       label: '物资单价',
-      placeholder: '请输入物资单价',
+      placeholder: '请输入物资单价'
     },
     {
       field: 'model',
@@ -23,7 +23,7 @@ export const searchFormConfig: IForm = {
 
     {
       field: 'gmtWarehoused',
-      type: 'datepicker',
+      type: 'date',
       label: '入库时间',
       placeholder: '请选择创建时间范围',
       otherOptions: {
@@ -34,7 +34,7 @@ export const searchFormConfig: IForm = {
     },
     {
       field: 'gmtBought',
-      type: 'datepicker',
+      type: 'date',
       label: '购买时间',
       placeholder: '请选择创建时间范围',
       otherOptions: {
@@ -48,6 +48,6 @@ export const searchFormConfig: IForm = {
     padding: '10px 40px'
   },
   colLayout: {
-    span: 8
+    span: 12
   }
 }

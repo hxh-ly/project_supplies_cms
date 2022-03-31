@@ -3,7 +3,7 @@ const AutoImport = require('unplugin-auto-import/webpack')
 const Components = require('unplugin-vue-components/webpack')
 const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 module.exports = {
-  publicPath: './',
+  //publicPath: './',
   lintOnSave: false,
   // 1 vue-cli的方法
   // 3 链式
@@ -13,6 +13,7 @@ module.exports = {
     .set('components','@/components')
   }
    */
+  publicPath: '/',
   configureWebpack: {
     resolve: {
       alias: {
@@ -21,7 +22,7 @@ module.exports = {
       }
     },
     devServer: {
-        proxy: {
+      proxy: {
         '^/api': {
           target: 'http://152.136.185.210:5000',
           pathRewrite: {
@@ -35,8 +36,8 @@ module.exports = {
             '^/dgut': ''
           },
           changeOrigin: true
-        },
-       /* '^/hxh': {
+        }
+        /* '^/hxh': {
           target: 'http://localhost:9002',
           pathRewrite: {
             '^/hxh': ''

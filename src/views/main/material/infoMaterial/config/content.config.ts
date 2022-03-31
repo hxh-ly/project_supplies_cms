@@ -16,13 +16,13 @@ export const contentTableConfig = {
     {
       prop: 'unitPrice',
       label: '单价',
-      minWidth: '80',
+      minWidth: '60',
       slotName: 'unitPrice'
     },
     {
       prop: 'totalNumber',
       label: '总数量',
-      minWidth: '80',
+      minWidth: '70',
       slotName: 'totalNumber'
     },
     {
@@ -34,17 +34,17 @@ export const contentTableConfig = {
     {
       prop: 'gmtBought',
       label: '购买时间',
-      minWidth: '250',
-      slotName: 'createAt'
+      minWidth: '160',
+      slotName: 'gmtBought'
     },
     {
       prop: 'gmtWarehoused',
       label: '入库时间',
-      minWidth: '250',
-      slotName: 'updateAt'
+      minWidth: '160',
+      slotName: 'gmtWarehoused'
     },
     { label: '操作', minWidth: '120', slotName: 'handle' }
   ],
-  isShowId: false,
-  isShowSelect: false
+  //isShowId: true,
+  isShowSelect: true
 }
