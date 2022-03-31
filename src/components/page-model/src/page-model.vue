@@ -3,13 +3,22 @@
   <div class="page-model">
     <el-dialog
       v-model="dialogVisible"
-      title="新建用户"
-      width="30%"
-      :before-close="handleClose"
+      :title="title"
+      :width="modelConfig.modelWidth || '30%'"
       destroy-on-close
     >
+      <template v-if="hasTable">
+        <xh-table
+          :listData="innerTable"
+          :listCount="count"
+          v-bind="modelConfig.tableList"
+          v-model:page="pageInfo"
+        >
+        </xh-table>
+      </template>
       <xh-form v-bind="modelConfig" v-model="formData"></xh-form>
-      <slot></slot>
+      <!-- <slot name='tableList'></slot> -->
+
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
@@ -20,12 +29,21 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, reactive, ref, watch, nextTick } from 'vue'
 import XhForm from '@/base-ui/form'
+import XhTable from '@/base-ui/table'
 import { userStore } from '@/store'
+import {
+  dgut_getQcode,
+  dgut_applyDetail
+} from '@/serve/DgutRequest/dgutRequest'
 /* xhfrom的配置 */
 export default defineComponent({
   props: {
+    title: {
+      type: String,
+      default: ''
+    },
     modelConfig: {
       type: Object,
       require: true
@@ -41,12 +59,29 @@ export default defineComponent({
     otherInfo: {
       type: Object,
       default: () => ({})
+    },
+    hasTable: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
-    XhForm
+    XhForm,
+    XhTable
   },
   setup(props) {
+    let innerTable: any = ref([])
+    let count = ref(0)
+    const createTableList = async (item: any) => {
+      innerTable.value = (
+        await dgut_applyDetail('borrowInfo/get', item.borrowInfoId)
+      ).data.detail.materialsInfo
+
+      count.value = innerTable.length
+      nextTick(() => {
+        console.log('innerTable', innerTable)
+      })
+    }
     const dialogVisible = ref(false)
     const formData = ref<any>({})
     const store = userStore()
@@ -76,7 +111,10 @@ export default defineComponent({
     return {
       dialogVisible,
       formData,
-      handleConfirmClick
+      handleConfirmClick,
+      innerTable,
+      count,
+      createTableList
     }
   }
 })
