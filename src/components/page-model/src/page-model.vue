@@ -77,7 +77,7 @@ export default defineComponent({
         await dgut_applyDetail('borrowInfo/get', item.borrowInfoId)
       ).data.detail.materialsInfo
 
-      count.value = innerTable.length
+      count.value = innerTable.value.length
       nextTick(() => {
         console.log('innerTable', innerTable)
       })

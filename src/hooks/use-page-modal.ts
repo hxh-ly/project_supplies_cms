@@ -13,14 +13,18 @@ export const usePageModal = (addFnCb?: CallbackFn, editFnCb?: CallbackFn) => {
     }
     addFnCb && addFnCb()
   }
-  const handleEditData = (item: any) => {
+  const handleEditData = async (item: any) => {
     defaultInfo.value = { ...item }
-    console.log('defaultInfo.value', defaultInfo.value)
+    //console.log('点击编辑的默认数据来源 defaultInfo.value', defaultInfo.value)
 
     if (pageModalRef.value) {
       pageModalRef.value.dialogVisible = true
     }
-    editFnCb && editFnCb(item)
+    if (pageModalRef.value && editFnCb && pageModalRef.value.hasTable) {
+      pageModalRef.value.createTableList(item)
+      /*    pageModalRef.value.innerTable.value = await editFnCb(item)
+      console.log('进edit了嘛',pageModalRef.value.innerTable); */
+    } else editFnCb && editFnCb(item)
   }
   return [pageModalRef, defaultInfo, handleNewData, handleEditData]
 }

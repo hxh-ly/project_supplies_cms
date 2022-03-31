@@ -6,14 +6,24 @@
       :listCount="userCount"
       v-bind="contentTableConfig"
       v-model:page="pageInfo"
+      @emitSelectionChange="emitSelectionChange"
     >
       <template #headerHandler>
         <el-button
           v-if="isCreate"
           type="primary"
-          size="medium"
+          size="default"
           @click="handleNewClick"
           >新建用户</el-button
+        >
+      </template>
+      <template #rightPrint>
+        <el-button
+          v-if="isPrint"
+          type="primary"
+          size="default"
+          @click="handleToPrint"
+          >导出打印</el-button
         >
       </template>
       <!-- id  -->
@@ -35,7 +45,7 @@
       </template>
       <template #updateAt="scope">
         <slot
-          ><span>{{ $filters.formatTime(scope.row.update) }}</span></slot
+          ><span>{{ $filters.formatTime(scope.row.updateAt) }}</span></slot
         >
       </template>
       <template #handle="scope">
@@ -54,7 +64,8 @@
             type="text"
             >编辑</el-button
           >
-           <el-button
+          <el-button
+            @click="handleEditClick(scope.row)"
             icon="el-icon-edit"
             type="text"
             >详情</el-button
@@ -75,7 +86,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, computed, ref, watch } from 'vue'
+import { defineComponent, computed, ref, watch, reactive } from 'vue'
 import XhTable from '@/base-ui/table'
 import { userStore } from '@/store'
 import { usePermission } from '@/hooks/use-permission'
@@ -92,15 +103,19 @@ export default defineComponent({
     isDgut: {
       type: Boolean,
       default: false
+    },
+    isPrint: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
     XhTable
   },
-  emits: ['newBtnClick', 'editBtnClick'],
+  emits: ['newBtnClick', 'editBtnClick', 'handlePrint'],
   setup(props, { emit }) {
     const store = userStore()
-    //1 双向绑定pageInfo
+    //1 双向绑定pageInfo  当前页，当前条数
     const pageInfo = ref({ currentPage: 1, pageSize: 10 })
     watch(pageInfo, (newVal) => {
       getPageData()
@@ -109,14 +124,12 @@ export default defineComponent({
     const getPageData = (queryInfo: any = {}) => {
       //if (!isQuery) return
       if (props.isDgut) {
-        console.log("~~~~~~~~~~~~~ isDgut");
         store.dispatch('system/getPageListAction', {
-          /* pageUrl: '/users/list', */
-          isDgut:true,
+          isDgut: true,
           pageName: props.pageName,
           queryInfo: {
-            offset: (pageInfo.value.currentPage - 1) * pageInfo.value.pageSize,
-            current: pageInfo.value.pageSize,
+            size: pageInfo.value.pageSize,
+            current: pageInfo.value.currentPage,
             ...queryInfo
           }
         })
@@ -137,7 +150,6 @@ export default defineComponent({
     const isUpdate = usePermission(props.pageName, 'update')
     const isDelete = usePermission(props.pageName, 'delete')
     const isQuery = usePermission(props.pageName, 'query')
-
     getPageData()
     //3 vuex中能获取数据
     const userList = computed(() =>
@@ -146,7 +158,7 @@ export default defineComponent({
     const userCount = computed(() =>
       store.getters['system/pageListCount'](props.pageName)
     )
-
+    console.log('列表数据！！！！！！！！！！！', userList)
     //4 动态获取到propList字段
     const otherPropSlots = props.contentTableConfig?.propList.filter(
       (item: any) => {
@@ -158,8 +170,6 @@ export default defineComponent({
       }
     )
     console.log('动态字段otherPropSlots', otherPropSlots)
-    //console.log('%c userCount', 'color:red', userCount.value)
-    //console.log('%c userCount', 'color:red', userList.value)
     // 5 删除 | 创建 |更新
     const handleDelClick = (item: any) => {
       console.log(item)
@@ -174,6 +184,16 @@ export default defineComponent({
     const handleEditClick = (item: any) => {
       emit('editBtnClick', item)
     }
+    const selectPrintItem = ref([])
+    /*   watch(()=>[selectPrintItem.value],(newVal)=>{
+      console.log('是否监听到改变selectPrintItem',newVal);
+    }) */
+    const emitSelectionChange = (v: any) => {
+      selectPrintItem.value = v
+    }
+    const handleToPrint = () => {
+      emit('handlePrint', selectPrintItem.value)
+    }
     return {
       userList,
       userCount,
@@ -185,7 +205,11 @@ export default defineComponent({
       isDelete,
       handleDelClick,
       handleNewClick,
-      handleEditClick
+      handleEditClick,
+      //导出打印相关
+      emitSelectionChange,
+      handleToPrint,
+      selectPrintItem
     }
   }
 })
