@@ -7,7 +7,9 @@ interface ISystemState {
   goodsCount: number
   menuList: any[]
   menuCount: number
-  materialList:any[]
-  materialCount:number
+  materialList: any[]
+  materialCount: number
+  borrowInfoList: any[]
+  borrowInfoCount: number
 }
 export { ISystemState }

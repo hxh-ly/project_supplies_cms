@@ -21,7 +21,9 @@ const system: Module<ISystemState, IRootStore> = {
       menuList: [],
       menuCount: 0,
       materialList: [],
-      materialCount: 0
+      materialCount: 0,
+      borrowInfoList: [],
+      borrowInfoCount: 0
     }
   },
   actions: {
@@ -31,11 +33,11 @@ const system: Module<ISystemState, IRootStore> = {
       let pageResult = null
       //毕设
       if (payload.isDgut) {
-        
         pageResult = await dgut_getMaterialListData(pageUrl, payload.queryInfo)
-        const list = pageResult.data.materialsPage.records
-        const totalCount = pageResult.data.materialsPage.records.length
-        console.log('请求得到吗！！！！', pageResult)
+        const list = pageResult.data.list?.records
+
+        const totalCount = pageResult.data.list?.records.length
+        console.log('list数组', pageResult)
         const changePageName =
           pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
         commit(`change${changePageName}List`, list)
@@ -117,6 +119,12 @@ const system: Module<ISystemState, IRootStore> = {
     },
     changeMaterialCount(state, data: any) {
       state.materialCount = data
+    },
+    changeBorrowInfoList(state, data: any) {
+      state.borrowInfoList = data
+    },
+    changeBorrowInfoCount(state, data: any) {
+      state.borrowInfoCount = data
     }
   },
   getters: {

@@ -7,6 +7,7 @@ interface IRootStore {
   entriesDepartment: any[]
   entriesRole: any[]
   entriesMenu: any[]
+  entriesMaterial: any[]
 }
 interface IRootWithModule {
   login: ILoginState
