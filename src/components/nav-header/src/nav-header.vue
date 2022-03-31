@@ -10,7 +10,7 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue'
-/* import { Fold } from '@element-plus/icons' */
+import { Fold } from '@element-plus/icons'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import XhBreadcrumb from '@/base-ui/breadcrumb'
@@ -19,7 +19,7 @@ import { pathMapBreadcrumbs } from '@/util/map-menu'
 export default defineComponent({
   emits: ['foldChange'],
   components: {
-    /* Fold, */
+    Fold,
     XhBreadcrumb,
     userInfoVue
   },
