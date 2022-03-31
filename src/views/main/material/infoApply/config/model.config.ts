@@ -19,6 +19,22 @@ export const modelFormConfig: IForm = {
       options: []
     },
     {
+      field: 'fixedAssets',
+      type: 'select',
+      label: '固定资产',
+      placeholder: '请选择是否是固定资产',
+      options: [
+        {
+          title: '是',
+          value: true
+        },
+        {
+          title: '否',
+          value: false
+        }
+      ]
+    },
+    {
       field: 'unitPrice',
       type: 'input',
       label: '单价/元',
@@ -71,7 +87,13 @@ export const modelFormConfig: IForm = {
           value: '34847349384'
         }
       ]
-    }
+    },
+    {
+      field: 'upLoad',
+      label: '物资图片',
+      type: 'upLoad',
+      //placeholder: '请输入备注信息'
+    },
   ],
   itemStyle: {
     padding: ''
@@ -104,6 +126,13 @@ export const modelFormConfig: IForm = {
         trigger: 'change'
       }
     ],
+    fixedAssets:[
+      {
+        required: true,
+        message: '请选择是否固定资产',
+        trigger: 'change'
+      }
+    ],
     gmtWarehoused: [
       {
         type: 'date',
@@ -115,19 +144,26 @@ export const modelFormConfig: IForm = {
     unitPrice: [
       {
         required: true,
-        message: '输入单价',
-        trigger: 'change'
+        type: 'string',
+        trigger: 'blur',
+        message: '单价不能为空'
       },
       {
-        type: 'number',
-        message: '输入数字',
-        trigger: 'blur'
+        pattern:
+          /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,
+        message: '请输入正确额格式,可保留两位小数'
       }
     ],
     projectTeamId: [
       {
         required: true,
         message: '选择所属项目组',
+        trigger: 'change'
+      }
+    ],
+    file:[
+      {
+        required: true,
         trigger: 'change'
       }
     ]

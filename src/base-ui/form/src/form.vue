@@ -120,6 +120,20 @@
                   >
                 </div>
               </template>
+              <template v-else-if="item.type == 'upLoad'">
+                <el-upload
+                  class="avatar-uploader"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload"
+                  :prop="item.field"
+                >
+                  <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                  <el-icon v-else class="avatar-uploader-icon"
+                    ><plus
+                  /></el-icon>
+                </el-upload>
+              </template>
             </el-form-item>
           </el-col>
         </template>
@@ -132,9 +146,13 @@
 import { defineComponent, PropType, ref, watch, reactive } from 'vue'
 import { formItem } from '../type'
 import type FormInstance from 'element-plus'
-import { ElForm } from 'element-plus'
+import { ElForm, ElMessage, ElUpload } from 'element-plus'
+import { Plus } from '@element-plus/icons'
+import type UploadProps from '../../../../node_modules/element-plus/lib'
 export default defineComponent({
-  components: {},
+  components: {
+    Plus
+  },
   props: {
     formItem: {
       type: Array as PropType<formItem[]>,
@@ -179,6 +197,24 @@ export default defineComponent({
     // 外层的formData【key】=''  这样改能影响到引用
     /*     let formData = ref({ ...props.modelValue })
      */
+    let imageUrl = ref('')
+    watch(
+      () => props.modelValue?.file,
+      (newVal) => {
+        if (!newVal) {
+          imageUrl.value = ''
+        }
+      },
+      {
+        deep: true
+      }
+    )
+    watch(
+      () => imageUrl,
+      (newVal) => {
+        console.log(newVal)
+      }
+    )
     const elNativeFromRef = ref<any>()
     let isMaterialDownsList =
       props.formItem[props.formItem.length - 1]?.field == 'materialIdNumberMap'
@@ -221,17 +257,37 @@ export default defineComponent({
       }
       // 对绑定数据赋值
     }
-    const submitForm = async (formEl: typeof ElForm | undefined) => {
+    const submitForm = async (
+      formEl: typeof ElForm | undefined,
+      submitRequest: any
+    ) => {
       if (!formEl) return
-      await formEl.validate((valid: any, fields: any) => {
+      await formEl.validate(async (valid: any, fields: any) => {
         if (valid) {
-          console.log('submit!')
+          try {
+            submitRequest()
+            console.log('submit!')
+          } catch (error) {
+            ElMessage({
+              message: '接口有问题',
+              type: 'error',
+              duration: 500
+            })
+          }
         } else {
           console.log('error submit!', fields)
         }
       })
     }
-
+    //处理图片上传
+    const beforeAvatarUpload: any = (rawFile: any) => {
+      console.log(rawFile)
+      imageUrl.value = URL.createObjectURL(rawFile)
+      //var fr = new FileReader()
+      //console.log(fr.readAsArrayBuffer(rawFile));
+      props.modelValue!.file = rawFile
+      // props.modelValue!.file = (fr.readAsArrayBuffer(rawFile) as any).result
+    }
     return {
       handleValueChange,
       handleMaterialChange,
@@ -240,7 +296,10 @@ export default defineComponent({
       filter,
       downOptions,
       elNativeFromRef,
-      submitForm
+      submitForm,
+      //上传图片
+      beforeAvatarUpload,
+      imageUrl
     }
   }
 })
@@ -266,5 +325,33 @@ export default defineComponent({
 }
 .select-materials-list-btn {
   margin-top: 10px;
+}
+.avatar-uploader {
+  border: 1px dashed #666666;
+}
+.avatar-uploader .avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #acabab;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  text-align: center;
 }
 </style>
