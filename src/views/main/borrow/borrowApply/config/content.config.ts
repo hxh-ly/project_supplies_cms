@@ -1,5 +1,5 @@
 export const contentTableConfig = {
-  title: '借用单列表',
+  title: '选择借用物资',
   /*   "borrowInfoId": "1503023080140865536",
   "borrowReason": "借用原因",
   "gmtStart": "2022-03-13T15:00:04.000+00:00",
@@ -12,38 +12,33 @@ export const contentTableConfig = {
       "account": "用户账号名",
       "telNumber": "13323323334"
   } */
-  propList: [
-    {
-      prop: 'userInfo',
-      label: '借用人',
-      minWidth: '100',
-      slotName: 'userInfo'
-    },
-    {
-      prop: 'borrowReason',
-      label: '借用原因',
-      minWidth: '160',
-      slotName: 'borrowReason'
-    },
-    {
-      prop: 'borrowState',
-      label: '归还状态',
-      slotName: 'image'
-    },
-    {
-      prop: 'gmtStart',
-      label: '借用时间',
-      minWidth: '250',
-      slotName: 'gmtStart'
-    },
-    {
-      prop: 'gmtEnd',
-      label: '归还时间',
-      minWidth: '250',
-      slotName: 'gmtEnd'
-    },
-    { label: '操作', minWidth: '120', slotName: 'handle' }
-  ],
+  labelWidth: '80px',
+  modelWidth: '60%',
+  tableList: {
+    title: '选择借用物资',
+    isShowId: false,
+    isShowSelect: true,
+    propList: [
+      {
+        prop: 'name',
+        label: '物资名称',
+        minWidth: '80',
+        slotName: 'name'
+      },
+      {
+        prop: 'model',
+        label: '型号',
+        minWidth: '80',
+        slotName: 'model'
+      },
+      {
+        prop: 'borrowNumber',
+        label: '剩余数量',
+        minWidth: '80',
+        slotName: 'borrowNumber'
+      }
+    ]
+  },
   isShowId: false,
   isShowSelect: false
 }

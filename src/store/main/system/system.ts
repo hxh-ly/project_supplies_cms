@@ -35,7 +35,7 @@ const system: Module<ISystemState, IRootStore> = {
       if (payload.isDgut) {
         pageResult = await dgut_getMaterialListData(pageUrl, payload.queryInfo)
         const list = pageResult.data.list?.records
-
+        //TODO
         const totalCount = pageResult.data.list?.records.length
         console.log('list数组', pageResult)
         const changePageName =

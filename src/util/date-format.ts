@@ -18,9 +18,9 @@ export function formatTimeStamp(
 export function handleDatePicker(key: string, value: any) {
   if (value[key]) {
     //前三位是get
-    let Suffix = key.slice(3)
-    let start = `start${Suffix}`
-    let end = `end${Suffix}`
+    const Suffix = key.slice(3)
+    const start = `start${Suffix}`
+    const end = `end${Suffix}`
     return {
       [start]: formatUtcString(value[key][0]),
       [end]: formatUtcString(value[key][1])
@@ -33,10 +33,10 @@ export function handleQueryDate(queryInfo: any, keys?: any[]) {
   let modifiedInfo: any = {
     ...queryInfo
   }
-  for(let key of keys!!) {
-   let departTimerRange =  handleDatePicker(key, queryInfo)
-   modifiedInfo={...modifiedInfo,...departTimerRange}
-   delete modifiedInfo[key]
+  for (const key of keys!) {
+    const departTimerRange = handleDatePicker(key, queryInfo)
+    modifiedInfo = { ...modifiedInfo, ...departTimerRange }
+    delete modifiedInfo[key]
   }
   console.log('查询的参数', modifiedInfo)
   return modifiedInfo

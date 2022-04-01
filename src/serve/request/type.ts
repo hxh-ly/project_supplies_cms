@@ -11,5 +11,6 @@ class HXHRequestInterceptor<T = AxiosResponse> {
 interface HXHRequestConfig<T = AxiosResponse> extends AxiosRequestConfig {
   interceptors?: HXHRequestInterceptor<T>
   isShowLoading?: boolean
+  contentType?: string
 }
 export { HXHRequestInterceptor, HXHRequestConfig }

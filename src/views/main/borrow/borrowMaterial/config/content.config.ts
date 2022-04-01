@@ -14,6 +14,12 @@ export const contentTableConfig = {
   } */
   propList: [
     {
+      prop: 'userId',
+      label: '借用人ID',
+      minWidth: '100',
+      slotName: 'userId'
+    },
+    {
       prop: 'userInfo',
       label: '借用人',
       minWidth: '100',

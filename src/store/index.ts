@@ -19,16 +19,16 @@ const store = createStore<IRootStore>({
       entriesMenu: [],
       entriesMaterial: [],
       entriesDepartment: [], //项目组
-      entriesBorrowState:[] //借机状态
+      entriesBorrowState: [] //借机状态
     }
   },
   mutations: {
     changeEntriesDepartMent(state, list: any) {
-      console.log('正常保存下拉需要的',list);
+      //console.log('正常保存下拉需要的', list)
       state.entriesDepartment = list
     },
     changeEntriesBorrowState(state, list: any) {
-      console.log('正常保存下拉需要的',list);
+      //console.log('正常保存下拉需要的', list)
       state.entriesBorrowState = list
     },
     changeEntriesRole(state, list: any) {
@@ -48,7 +48,8 @@ const store = createStore<IRootStore>({
       const departmentList = (await dgut_requestProjectItem(undefined)).data
       commit('changeEntriesDepartMent', departmentList)
       //请求借用单状态
-      const borrowStateList= (await dgut_requestBorrowStateList(undefined)).data
+      const borrowStateList = (await dgut_requestBorrowStateList(undefined))
+        .data
       commit('changeEntriesBorrowState', borrowStateList)
       const RoleResult = await getPageListData('/role/list', {
         offset: 0,

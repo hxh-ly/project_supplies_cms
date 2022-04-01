@@ -32,9 +32,9 @@ export const searchFormConfig: IForm = {
       field: 'borrowReason',
       type: 'input',
       label: '借用原因',
-      placeholder: '请输入借用原因',
-    },
-  /*   {
+      placeholder: '请输入借用原因'
+    }
+    /*   {
       field: 'gmtStart',
       type: 'datepicker',
       label: '借用时间',

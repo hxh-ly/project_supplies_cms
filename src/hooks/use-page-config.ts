@@ -9,7 +9,10 @@ export function usePageSearch() {
     pageContentRef.value?.getPageData()
   }
   const handleQueryClick = (queryInfo: any) => {
-    let modifyInfo= handleQueryDate(queryInfo,['gmtWarehoused','gmtBought'])
+    const modifyInfo = handleQueryDate(queryInfo, [
+      'gmtWarehoused',
+      'gmtBought'
+    ])
     pageContentRef.value?.getPageData(modifyInfo)
   }
   return [pageContentRef, handleResetClick, handleQueryClick]

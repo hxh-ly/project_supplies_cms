@@ -90,6 +90,9 @@ class HXHRequest {
   get<T>(config: HXHRequestConfig<T>): Promise<T> {
     return this.request<T>({ ...config, method: 'GET' })
   }
+  put<T>(config: HXHRequestConfig<T>): Promise<T> {
+    return this.request<T>({ ...config, method: 'PUT' })
+  }
   post<T>(config: HXHRequestConfig<T>): Promise<T> {
     return this.request<T>({ ...config, method: 'POST' })
   }

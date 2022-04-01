@@ -19,6 +19,16 @@
         </template>
       </xh-form>
     </div>
+    <!--    <page-model
+    ref="pageModalRef"
+    pageName="material"
+    :modelConfig="dialogConfigRef"
+    :defaultInfo="defaultInfo"
+    :hasTable="true"
+  >
+    <template #tableList>
+    </template>
+  </page-model> -->
   </div>
 </template>
 <script lang="ts">
@@ -34,7 +44,11 @@ import { modelFormConfig } from './config/model.config'
 import { userStore } from '@/store'
 import XhForm from '@/base-ui/form'
 import { dgut_setOnApplyForm } from '@/serve/DgutRequest/dgutRequest'
+import { normalRequest } from '@/serve/index'
 import { ElMessage } from 'element-plus'
+import pageModel from '@/components/page-model'
+import { contentTableConfig } from './config/content.config'
+import { handleWorkRequest } from '@/util/handleRequest'
 export default defineComponent({
   props: {
     title: {
@@ -59,7 +73,8 @@ export default defineComponent({
     }
   },
   components: {
-    XhForm
+    XhForm,
+    pageModel
   },
   setup(props) {
     //1 全局的日期格式化
@@ -79,7 +94,15 @@ export default defineComponent({
       // console.log('modelFormConfig',modelFormConfig);
       return modelFormConfig
     })
+    const dialogConfigRef = computed(() => {
+      return contentTableConfig
+    })
+    const pageModalRef = ref<InstanceType<typeof pageModel>>()
     const handleResetValue = () => {
+      //在这里弹窗弹窗
+      /*  if (pageModalRef.value) {
+        pageModalRef.value.dialogVisible = true
+      } */
       if (
         formData.value['materialIdNumberMap'] &&
         formData.value['materialIdNumberMap'].length > 0
@@ -104,31 +127,50 @@ export default defineComponent({
         map[`${item.id}`] = item.num
       })
       obj['materialIdNumberMap'] = map
-      dgut_setOnApplyForm('/borrowInfo/apply', obj)
-        .then((res) => {
+      handleWorkRequest(
+        function () {
+          return dgut_setOnApplyForm('/borrowInfo/apply', obj)
+        },
+        () => {
+          obj = null
+          formData.value = {}
+        }
+      )
+      /*     dgut_setOnApplyForm('/borrowInfo/apply', obj,()=>{
+        obj = null
+          formData.value = {}
+      }).then((res) => {
           obj = null
           formData.value = {}
           console.log(res)
           if (res.data.success) {
             ElMessage({
-              message: '申请成功~~，请等待审核',
+              message: res.data.message,
               type: 'success',
               duration: 500
             })
           } else {
-            throw new Error('请求失败')
+            throw res.data.message
           }
         })
         .catch((err) => {
-          console.log(err)
-        })
+          ElMessage({
+            message: err,
+            type: 'error',
+            duration: 500
+          })
+        }) */
     }
     return {
       formData,
       handleConfirmClick,
       modelFormConfigRef,
       handleResetValue,
-      handleDelSelect
+      handleDelSelect,
+      //选择弹窗
+      pageModalRef,
+      //添加
+      dialogConfigRef
     }
   }
 })

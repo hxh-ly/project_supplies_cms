@@ -23,14 +23,14 @@
       <template #userInfo="scope">{{
         scope.row.userInfo?.account || 0
       }}</template>
-        <template #userId="scope">{{
-        scope.row.userId || 0
-      }}</template>
+      <template #userId="scope">{{ scope.row.userId || 0 }}</template>
     </page-content>
     <page-model
       ref="pageModalRef"
       pageName="material"
       :modelConfig="modelFormConfigRef"
+      @materialsInStore="handleInStore"
+      @materialsOutStore="handleOutStore"
       :defaultInfo="defaultInfo"
       :hasTable="true"
     >
@@ -61,7 +61,9 @@ import { usePageModal } from '@/hooks/use-page-modal'
 import {
   dgut_getQcode,
   dgut_applyDetail,
-  dgut_cancelBorrow
+  dgut_cancelBorrow,
+  dgut_materialReturn,
+  dgut_materialBorrow
 } from '@/serve/DgutRequest/dgutRequest'
 import { ElMessage } from 'element-plus'
 export default defineComponent({
@@ -92,7 +94,7 @@ export default defineComponent({
       let formItemBorrowState = searchFormConfig.formItem.find(
         (item: any) => item.field == 'borrowState'
       )
-      formItemBorrowState!!.options = store.state.entriesBorrowState.map(
+      formItemBorrowState!.options = store.state.entriesBorrowState.map(
         (item: any) => {
           return {
             title: item.info,
@@ -135,6 +137,52 @@ export default defineComponent({
     }
     const [pageModalRef, defaultInfo, handleNewData, handleEditData] =
       usePageModal(undefined, editDataFn)
+    const handleInStore = (item: any) => {
+      //console.log('入库', item)
+      dgut_materialReturn(undefined, item)
+        .then((res) => {
+          ;(pageModalRef as any).value.dialogVisible = false
+          if (res.data.success) {
+            ElMessage({
+              message: res.data.info,
+              type: 'success',
+              duration: 500
+            })
+          } else {
+            throw res.data.info
+          }
+        })
+        .catch((err) => {
+          ElMessage({
+            message: err,
+            type: 'error',
+            duration: 500
+          })
+        })
+    }
+    const handleOutStore = (item: any) => {
+      // console.log('出库', item)
+      dgut_materialBorrow(undefined, item)
+        .then((res) => {
+          ;(pageModalRef as any).value.dialogVisible = false
+          if (res.data.success) {
+            ElMessage({
+              message: res.data.info,
+              type: 'success',
+              duration: 500
+            })
+          } else {
+            throw res.data.info
+          }
+        })
+        .catch((err) => {
+          ElMessage({
+            message: err,
+            type: 'error',
+            duration: 500
+          })
+        })
+    }
     return {
       contentTableConfig,
       searchFormConfig,
@@ -154,7 +202,11 @@ export default defineComponent({
       defaultInfo,
 
       materialsInfo,
-      count
+      count,
+
+      //详情里的操作
+      handleInStore,
+      handleOutStore
     }
   }
 })

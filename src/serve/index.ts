@@ -66,10 +66,10 @@ export const dgutRequest = new HXHRequest({
 } */
 export const normalRequest = async (url: string, data: any) => {
   const formData: any = new FormData()
-  for (let i in data) {
+  for (const i in data) {
     formData.append(i, data[i])
   }
-  console.log(formData);
+  console.log(formData)
   await axios({
     method: 'post',
     url: '/dgut' + url,
@@ -78,7 +78,7 @@ export const normalRequest = async (url: string, data: any) => {
       'Content-Type': 'multipart/form-data',
       'auth-token': 'ylhao666'
     },
-  data: formData,
+    data: formData
   })
 }
 
