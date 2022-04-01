@@ -26,12 +26,12 @@
       <template #unitPrice="scope">{{
         '¥' + (scope.row.unitPrice || 0)
       }}</template>
-       <template #gmtWarehoused="scope">
+      <template #gmtWarehoused="scope">
         <slot
           ><span>{{ $filters.formatTime(scope.row.gmtWarehoused) }}</span></slot
         >
       </template>
-         <template #gmtBought="scope">
+      <template #gmtBought="scope">
         <slot
           ><span>{{ $filters.formatTime(scope.row.gmtBought) }}</span></slot
         >
@@ -119,7 +119,7 @@ export default defineComponent({
           materialId: item.materialId
         }))
         try {
-          let QRcodeDataList = await getMultiQRcode('code', idList)
+          let QRcodeDataList = await getMultiQRcode(undefined, idList)
           let fileDownList = idList.map((item: any, index: number) => ({
             ...item,
             url: QRcodeDataList[index]

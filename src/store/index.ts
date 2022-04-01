@@ -42,7 +42,7 @@ const store = createStore<IRootStore>({
         size: 1000
       }) */
       const departMentResult = await dgut_requestProjectItem(
-        'projectTeam/list/all'
+       undefined
       )
       const departmentList = departMentResult.data
       commit('changeEntriesDepartMent', departmentList)

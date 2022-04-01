@@ -11,6 +11,7 @@
       pageName="borrowInfo"
       @newBtnClick="handleNewData"
       @editBtnClick="handleEditData"
+      @cancelBtnClick="handleSwitchState"
       :isDgut="true"
     >
       <template #gmtStart="scope">
@@ -56,8 +57,10 @@ import { usePageSearch } from '@/hooks/use-page-config'
 import { usePageModal } from '@/hooks/use-page-modal'
 import {
   dgut_getQcode,
-  dgut_applyDetail
+  dgut_applyDetail,
+  dgut_cancelBorrow
 } from '@/serve/DgutRequest/dgutRequest'
+import { ElMessage } from 'element-plus'
 export default defineComponent({
   name: 'borrowMaterial',
   components: {
@@ -66,9 +69,6 @@ export default defineComponent({
     pageModel
   },
   setup() {
-    /*  dgut_getQcode('/code', 'ylhao').then((res) => {
-      console.log('图片接口',res)
-    }) */
     /*1 页面自己的逻辑：添加显示哪些列表项 编辑显示哪些列表项 */
     let materialsInfo = reactive([])
     let count = ref(0)
@@ -80,8 +80,8 @@ export default defineComponent({
     }
     const editDataFn = async (item: any) => {
       //请求详情数据
-      return (await dgut_applyDetail('borrowInfo/get', item.borrowInfoId)).data
-        .detail.materialsInfo
+      return (await dgut_applyDetail(undefined, item.borrowInfoId)).data.detail
+        .materialsInfo
     }
     //2 动态添加部门和角色列表
     const modelFormConfigRef = computed(() => {
@@ -90,7 +90,32 @@ export default defineComponent({
     })
 
     const [pageContentRef, handleResetClick, handleQueryClick] = usePageSearch()
-
+    const handleSwitchState = (data: any) => {
+      //发出请求修改状态
+      console.log('我要取消了', data.borrowInfoId)
+      dgut_cancelBorrow(undefined, data.borrowInfoId)
+        .then((res) => {
+          if (!res.data.success) {
+            throw res.data.info
+          } else {
+            return res.data.info
+          }
+        })
+        .then((result) => {
+           ElMessage({
+            message: result,
+            type: 'success',
+            duration: 500
+          })
+        })
+        .catch((err) => {
+          ElMessage({
+            message: err,
+            type: 'error',
+            duration: 500
+          })
+        })
+    }
     const [pageModalRef, defaultInfo, handleNewData, handleEditData] =
       usePageModal(undefined, editDataFn)
     return {
@@ -104,8 +129,10 @@ export default defineComponent({
 
       //弹窗
       pageModalRef,
+      //操作相关
       handleNewData,
       handleEditData,
+      handleSwitchState,
       defaultInfo,
 
       materialsInfo,

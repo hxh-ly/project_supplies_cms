@@ -70,6 +70,13 @@
             type="text"
             >详情</el-button
           >
+           <el-button
+             v-if="scope.row.borrowState==0"
+            @click="handleCancelClick(scope.row)"
+            icon="el-icon-edit"
+            type="text"
+            >取消申请</el-button
+          >
         </div>
       </template>
       <!-- 这部分的动态配置出来的 -->
@@ -112,7 +119,7 @@ export default defineComponent({
   components: {
     XhTable
   },
-  emits: ['newBtnClick', 'editBtnClick', 'handlePrint'],
+  emits: ['newBtnClick', 'editBtnClick', 'handlePrint','cancelBtnClick'],
   setup(props, { emit }) {
     const store = userStore()
     //1 双向绑定pageInfo  当前页，当前条数
@@ -150,6 +157,11 @@ export default defineComponent({
     const isUpdate = usePermission(props.pageName, 'update')
     const isDelete = usePermission(props.pageName, 'delete')
     const isQuery = usePermission(props.pageName, 'query')
+
+    //什么样的情况下能取消申请：未出库的情况
+    //判断是否出库
+    let isCancel= ref(true)
+
     getPageData()
     //3 vuex中能获取数据
     const userList = computed(() =>
@@ -184,6 +196,9 @@ export default defineComponent({
     const handleEditClick = (item: any) => {
       emit('editBtnClick', item)
     }
+    const handleCancelClick=(item:any)=>{
+       emit('cancelBtnClick', item)
+    }
     const selectPrintItem = ref([])
     /*   watch(()=>[selectPrintItem.value],(newVal)=>{
       console.log('是否监听到改变selectPrintItem',newVal);
@@ -200,12 +215,15 @@ export default defineComponent({
       getPageData,
       pageInfo,
       otherPropSlots,
+      //权限相关
       isCreate,
       isUpdate,
       isDelete,
+      //操作相关
       handleDelClick,
       handleNewClick,
       handleEditClick,
+      handleCancelClick,
       //导出打印相关
       emitSelectionChange,
       handleToPrint,
