@@ -91,9 +91,9 @@ export const modelFormConfig: IForm = {
     {
       field: 'upLoad',
       label: '物资图片',
-      type: 'upLoad',
+      type: 'upLoad'
       //placeholder: '请输入备注信息'
-    },
+    }
   ],
   itemStyle: {
     padding: ''
@@ -126,7 +126,7 @@ export const modelFormConfig: IForm = {
         trigger: 'change'
       }
     ],
-    fixedAssets:[
+    fixedAssets: [
       {
         required: true,
         message: '请选择是否固定资产',
@@ -161,7 +161,7 @@ export const modelFormConfig: IForm = {
         trigger: 'change'
       }
     ],
-    file:[
+    file: [
       {
         required: true,
         trigger: 'change'

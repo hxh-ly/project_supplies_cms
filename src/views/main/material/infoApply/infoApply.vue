@@ -41,6 +41,7 @@ import {
   dgut_setOnApplyForm,
   dgut_requestProjectItem
 } from '@/serve/DgutRequest/dgutRequest'
+import { normalRequest } from '@/serve/index'
 import { ElMessage, ElForm } from 'element-plus'
 export default defineComponent({
   props: {
@@ -82,9 +83,11 @@ export default defineComponent({
         unitPrice: '',
         gmtBought: null,
         gmtWarehoused: null,
+        fixedAssets: null,
         detail: '',
         remark: '',
-        projectTeamId: ''
+        projectTeamId: '',
+        file: ''
       }
     }
 
@@ -113,8 +116,20 @@ export default defineComponent({
     }
 
     const handleConfirmClick = async () => {
+      let formNeedData = {
+        ...formData.value,
+        unitPrice: Number(formData.value.unitPrice),
+        type: 2,
+        gmtBought: $filters.formatTime(formData.value.gmtBought),
+        gmtWarehoused: $filters.formatTime(formData.value.gmtWarehoused)
+      }
+      console.log(formNeedData)
       infoApplyFormRef.value?.submitForm(
-        infoApplyFormRef.value?.elNativeFromRef
+        infoApplyFormRef.value?.elNativeFromRef,
+        async () => {
+          await normalRequest('/material/input', formNeedData)
+          handleResetValue()
+        }
       )
       /*  await infoApplyFormRef.value?.elNativeFromRef.validate(
         (valid: boolean, fields: any) => {
