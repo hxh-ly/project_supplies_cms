@@ -1,7 +1,7 @@
 <template>
   <div class="user">
     <page-search
-      :searchFormConfig="searchFormConfig"
+      :searchFormConfig="searchFormConfigRef"
       @resetBtnClick="handleResetClick"
       @queryBtnClick="handleQueryClick"
     />
@@ -22,6 +22,9 @@
       </template>
       <template #userInfo="scope">{{
         scope.row.userInfo?.account || 0
+      }}</template>
+        <template #userId="scope">{{
+        scope.row.userId || 0
       }}</template>
     </page-content>
     <page-model
@@ -83,9 +86,23 @@ export default defineComponent({
       return (await dgut_applyDetail(undefined, item.borrowInfoId)).data.detail
         .materialsInfo
     }
-    //2 动态添加部门和角色列表
-    const modelFormConfigRef = computed(() => {
+    //2 动态添加借用单的状态
+    const searchFormConfigRef = computed(() => {
       const store = userStore()
+      let formItemBorrowState = searchFormConfig.formItem.find(
+        (item: any) => item.field == 'borrowState'
+      )
+      formItemBorrowState!!.options = store.state.entriesBorrowState.map(
+        (item: any) => {
+          return {
+            title: item.info,
+            value: item.code
+          }
+        }
+      )
+      return searchFormConfig
+    })
+    const modelFormConfigRef = computed(() => {
       return modelFormConfig
     })
 
@@ -102,7 +119,7 @@ export default defineComponent({
           }
         })
         .then((result) => {
-           ElMessage({
+          ElMessage({
             message: result,
             type: 'success',
             duration: 500
@@ -126,7 +143,8 @@ export default defineComponent({
       handleQueryClick,
 
       modelFormConfigRef,
-
+      //查询框项配置
+      searchFormConfigRef,
       //弹窗
       pageModalRef,
       //操作相关
@@ -142,4 +160,8 @@ export default defineComponent({
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+aa {
+  color: rgb(60, 182, 219);
+}
+</style>

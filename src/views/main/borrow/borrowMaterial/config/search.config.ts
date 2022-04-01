@@ -3,13 +3,13 @@ export const searchFormConfig: IForm = {
   labelWidth: '120px',
   formItem: [
     {
-      field: 'userInfo',
+      field: 'userId',
       type: 'input',
-      label: '借用人名字',
-      placeholder: '请输入借用人'
+      label: '借用人ID',
+      placeholder: '请输入借用人ID'
     },
     {
-      field: 'state',
+      field: 'borrowState',
       type: 'select',
       label: '借用状态',
       placeholder: '请输入借用状态',
@@ -29,6 +29,12 @@ export const searchFormConfig: IForm = {
       ]
     },
     {
+      field: 'borrowReason',
+      type: 'input',
+      label: '借用原因',
+      placeholder: '请输入借用原因',
+    },
+  /*   {
       field: 'gmtStart',
       type: 'datepicker',
       label: '借用时间',
@@ -49,7 +55,7 @@ export const searchFormConfig: IForm = {
         endPlaceholder: '结束时间',
         type: 'daterange'
       }
-    }
+    } */
   ],
   itemStyle: {
     padding: '10px 40px'

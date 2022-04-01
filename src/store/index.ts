@@ -7,22 +7,29 @@ import { IRootStore, IStoreType } from './type'
 import { getPageListData } from '@/serve/main/system/system'
 import {
   dgut_getMaterialListData,
-  dgut_requestProjectItem
+  dgut_requestProjectItem,
+  dgut_requestBorrowStateList
 } from '@/serve/DgutRequest/dgutRequest'
 const store = createStore<IRootStore>({
   state: () => {
     return {
       name: 'hxh',
       age: 'asda',
-      entriesDepartment: [], //项目组
       entriesRole: [],
       entriesMenu: [],
-      entriesMaterial: []
+      entriesMaterial: [],
+      entriesDepartment: [], //项目组
+      entriesBorrowState:[] //借机状态
     }
   },
   mutations: {
     changeEntriesDepartMent(state, list: any) {
+      console.log('正常保存下拉需要的',list);
       state.entriesDepartment = list
+    },
+    changeEntriesBorrowState(state, list: any) {
+      console.log('正常保存下拉需要的',list);
+      state.entriesBorrowState = list
     },
     changeEntriesRole(state, list: any) {
       state.entriesRole = list
@@ -36,16 +43,13 @@ const store = createStore<IRootStore>({
     }
   },
   actions: {
+    //初始化请求一些数据，放入vuex，是否要放入缓存呢
     async getInitialDataAction({ commit }) {
-      /* const departMentResult = await getPageListData('/department/list', {
-        offset: 0,
-        size: 1000
-      }) */
-      const departMentResult = await dgut_requestProjectItem(
-       undefined
-      )
-      const departmentList = departMentResult.data
+      const departmentList = (await dgut_requestProjectItem(undefined)).data
       commit('changeEntriesDepartMent', departmentList)
+      //请求借用单状态
+      const borrowStateList= (await dgut_requestBorrowStateList(undefined)).data
+      commit('changeEntriesBorrowState', borrowStateList)
       const RoleResult = await getPageListData('/role/list', {
         offset: 0,
         size: 1000
