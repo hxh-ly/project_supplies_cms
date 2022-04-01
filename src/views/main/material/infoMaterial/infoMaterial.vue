@@ -16,9 +16,10 @@
       :isPrint="true"
     >
       <template #image="scope">
+
         <el-image
           style="width: 60px; height: 60px"
-          :src="scope.row.photo"
+          :src="scope.row.photo?BASE_IMG_URL+scope.row.photo:''"
           :preview-src-list="[scope.row.photo]"
         >
         </el-image>
@@ -52,7 +53,7 @@ import { dgut_getQcode, getMultiQRcode } from '@/serve/DgutRequest/dgutRequest'
 import { downLoadZip, downImgToPdf } from '@/util/fileSave'
 import { ElMessage } from 'element-plus'
 import PageImgprint from '@/components/page-imgprint/src/page-imgprint.vue'
-import JsPDF from 'jspdf'
+import {BASE_IMG_URL} from '@/const/constAttr'
 export default defineComponent({
   name: 'infoMaterial',
   components: {
@@ -137,7 +138,7 @@ export default defineComponent({
       handleNewData,
       handleEditData,
       defaultInfo,
-
+BASE_IMG_URL,
       //导出打印
       handlePrint,
       pageImgRef
