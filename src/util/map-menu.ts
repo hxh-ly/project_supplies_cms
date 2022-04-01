@@ -13,7 +13,7 @@ export function mapMenuToRoutes(useMenus: RouteRecordRaw[]) {
     const route = require('../router/main' + key.split('.')[1])
     allRoutes.push(route.default)
   })
-  console.log(allRoutes)
+  //console.log('项目所有路由',allRoutes)
   //2 属于menus的路由
   const _recurseGetRoute = (menus: any[]) => {
     for (const menu of menus) {

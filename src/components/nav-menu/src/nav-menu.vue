@@ -66,7 +66,6 @@ export default defineComponent({
     const curRoute = useRoute()
     const currentPath = curRoute.path
 
-
     //data
     const menu = pathToMenu(useMenus.value, currentPath)
     const defaultValue = ref(menu.id + '')
@@ -74,9 +73,9 @@ export default defineComponent({
     //handle
     const handleMenuItemClick = (item: any) => {
       console.log('--------')
-      console.log(item);
+      console.log(item)
 
-       console.log('菜单栏左边菜单',useMenus, currentPath)
+      console.log('菜单栏左边菜单', useMenus, currentPath)
       router.push({
         path: item.url ?? '/not-found'
       })

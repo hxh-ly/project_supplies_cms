@@ -23,6 +23,7 @@ const login: Module<ILoginState, IRootStore> = {
   actions: {
     async accountLoginAction({ commit, dispatch }, playload: IAccount) {
       //1
+
       const loginData = await accountLoginRequest(playload)
       const { id, token } = loginData.data
       commit('changeToken', token)
@@ -40,6 +41,7 @@ const login: Module<ILoginState, IRootStore> = {
       const userMenus = UserInfoMenuRes.data
       localCache.setItem('userMenus', userMenus)
       commit('changeUserMenus', userMenus)
+      //console.log('从登录页进来才会执行，接着跳到main');
       //4 跳到首页
       router.push('/main')
     },
@@ -47,9 +49,19 @@ const login: Module<ILoginState, IRootStore> = {
       //console.log('执行phoneLoginAction', playload)
     },
     loadLocalLogin({ commit, dispatch }) {
+      console.log(
+        '%c process---刷新时进入 loadLocalLogin',
+        'background:#aaa;color:#bada55'
+      )
       const token = localCache.getItem('token')
       if (token) {
         commit('changeToken', token)
+        console.log(
+          '%c process---InitialDataAction',
+          'background:#aaa;color:#bada55',
+          'token存在进行'
+        )
+
         dispatch('getInitialDataAction', null, { root: true })
       }
       const userInfo = localCache.getItem('userInfo')
@@ -73,20 +85,14 @@ const login: Module<ILoginState, IRootStore> = {
       state.userMenus = userMenus
       //4 将用户的权限操作保存
       state.permission = mapMenusToPermissions(userMenus)
-      console.log('这个用户的权限', state.permission)
-      //console.log('user菜单数据', userMenus)
-      //Menus --> routes
-      //将menus设在vuex时，
-      console.log('路由添加前',userMenus);
-
+      // console.log('%c function---mapMenusToPermissions','background:rgb(60, 182, 219)' , '当前用户权限', state.permission)
+      // console.log('路由添加前', userMenus)
       const routes = mapMenuToRoutes(userMenus)
-      console.log('当前用于route组件',routes);
-
+      //console.log('%c function---mapMenuToRoutes','background:rgb(60, 182, 219)' , '当前用户拿到路由记录', routes)
       routes.forEach((route) => {
         router.addRoute('main', route)
       })
-      console.log(router);
-
+      // console.log('%c function---mapMenuToRoutes',router,'动态添加的路由对象')
     }
   }
 }

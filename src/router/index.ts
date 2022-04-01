@@ -38,12 +38,10 @@ router.beforeEach((to) => {
     }
   }
   if (to.path == '/main') {
-    console.log(firstMenu)
-    console.log(router.getRoutes())
-    console.log(to)
+    console.log('%c process--跳转到主页', 'background:#aaa;color:#bada55', to)
     return firstMenu.url
   }
-  console.log(router.getRoutes())
-  console.log(to) // route对象
+  //console.log(router.getRoutes())
+  // console.log(to) // route对象
 })
 export default router

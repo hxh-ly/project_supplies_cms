@@ -11,7 +11,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
-import { ElForm } from 'element-plus'
+import { ElForm, ElMessage } from 'element-plus'
 import { rules } from '../config'
 import localCache from '../../../util/cache'
 import { useStore } from 'vuex'
@@ -39,7 +39,11 @@ export default defineComponent({
         if (valid) {
           store.dispatch('login/accountLoginAction', { ...account })
         } else {
-          console.log('表单验证没通过')
+          ElMessage({
+            message: '验证失败，请检查密码或者账户',
+            icon: 'error',
+            duration: 500
+          })
         }
       })
       //

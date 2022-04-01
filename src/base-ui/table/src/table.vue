@@ -6,6 +6,7 @@
         <div class="header-left">{{ title }}</div>
         <div class="header-handle">
           <slot name="headerHandler"></slot>
+          <slot name="rightPrint"> </slot>
         </div>
       </slot>
     </div>
