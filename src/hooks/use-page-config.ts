@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import pageContent from '@/components/page-content'
+import { handleQueryDate } from '@/util/date-format'
 export function usePageSearch() {
   const pageContentRef = ref<InstanceType<typeof pageContent>>()
   const handleResetClick = () => {
@@ -8,7 +9,8 @@ export function usePageSearch() {
     pageContentRef.value?.getPageData()
   }
   const handleQueryClick = (queryInfo: any) => {
-    pageContentRef.value?.getPageData(queryInfo)
+    let modifyInfo= handleQueryDate(queryInfo,['gmtWarehoused','gmtBought'])
+    pageContentRef.value?.getPageData(modifyInfo)
   }
   return [pageContentRef, handleResetClick, handleQueryClick]
 }

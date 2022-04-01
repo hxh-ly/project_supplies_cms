@@ -16,10 +16,9 @@
       :isPrint="true"
     >
       <template #image="scope">
-
         <el-image
           style="width: 60px; height: 60px"
-          :src="scope.row.photo?BASE_IMG_URL+scope.row.photo:''"
+          :src="scope.row.photo ? BASE_IMG_URL + scope.row.photo : ''"
           :preview-src-list="[scope.row.photo]"
         >
         </el-image>
@@ -27,6 +26,16 @@
       <template #unitPrice="scope">{{
         '¥' + (scope.row.unitPrice || 0)
       }}</template>
+       <template #gmtWarehoused="scope">
+        <slot
+          ><span>{{ $filters.formatTime(scope.row.gmtWarehoused) }}</span></slot
+        >
+      </template>
+         <template #gmtBought="scope">
+        <slot
+          ><span>{{ $filters.formatTime(scope.row.gmtBought) }}</span></slot
+        >
+      </template>
     </page-content>
     <page-model
       ref="pageModalRef"
@@ -53,7 +62,7 @@ import { dgut_getQcode, getMultiQRcode } from '@/serve/DgutRequest/dgutRequest'
 import { downLoadZip, downImgToPdf } from '@/util/fileSave'
 import { ElMessage } from 'element-plus'
 import PageImgprint from '@/components/page-imgprint/src/page-imgprint.vue'
-import {BASE_IMG_URL} from '@/const/constAttr'
+import { BASE_IMG_URL } from '@/const/constAttr'
 export default defineComponent({
   name: 'infoMaterial',
   components: {
@@ -138,7 +147,7 @@ export default defineComponent({
       handleNewData,
       handleEditData,
       defaultInfo,
-BASE_IMG_URL,
+      BASE_IMG_URL,
       //导出打印
       handlePrint,
       pageImgRef

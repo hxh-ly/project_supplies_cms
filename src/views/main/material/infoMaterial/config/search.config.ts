@@ -20,10 +20,19 @@ export const searchFormConfig: IForm = {
       label: '物资型号',
       placeholder: '请选择物资型号'
     },
-
+    {
+      field: 'isFixedAssets',
+      type: 'select',
+      label: '固定资产',
+      placeholder: '请选择',
+      options: [
+        { title: '是', value: 1 },
+        { title: '否', value: 0 }
+      ]
+    },
     {
       field: 'gmtWarehoused',
-      type: 'date',
+      type: 'datepicker',
       label: '入库时间',
       placeholder: '请选择创建时间范围',
       otherOptions: {
@@ -34,7 +43,7 @@ export const searchFormConfig: IForm = {
     },
     {
       field: 'gmtBought',
-      type: 'date',
+      type: 'datepicker',
       label: '购买时间',
       placeholder: '请选择创建时间范围',
       otherOptions: {
