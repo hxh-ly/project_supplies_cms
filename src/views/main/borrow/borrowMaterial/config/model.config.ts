@@ -51,12 +51,14 @@ export const modelFormConfig: IForm = {
         minWidth: '80',
         slotName: 'borrowNumber'
       },
+
       {
-        prop: 'photo',
-        label: '物资图片',
-        minWidth: '100',
-        slotName: 'image'
-      }
+        prop: 'borrowStateInfo',
+        label: '状态',
+        minWidth: '80',
+        slotName: 'borrowStateInfo'
+      },
+      { label: '操作', minWidth: '120', slotName: 'handle' }
     ]
   },
   itemStyle: {

@@ -14,6 +14,28 @@
           v-bind="modelConfig.tableList"
           v-model:page="pageInfo"
         >
+          <template #handle="scope">
+            <div class="handle-btn">
+              <el-button
+                v-if="scope.row.borrowState == 1"
+                @click="handleInClick(scope.row)"
+                type="success"
+                >入库</el-button
+              >
+              <el-button
+                v-else-if="scope.row.borrowState == 0"
+                @click="handleOutClick(scope.row)"
+                type="primary"
+                >出库</el-button
+              >
+              <el-button
+                disabled
+                v-else-if="scope.row.borrowState == 2"
+                type="primary"
+                >禁止修改</el-button
+              >
+            </div>
+          </template>
         </xh-table>
       </template>
       <xh-form v-bind="modelConfig" v-model="formData"></xh-form>
@@ -39,6 +61,7 @@ import {
 } from '@/serve/DgutRequest/dgutRequest'
 /* xhfrom的配置 */
 export default defineComponent({
+  emits: ['materialsInStore', 'materialsOutStore'],
   props: {
     title: {
       type: String,
@@ -69,7 +92,7 @@ export default defineComponent({
     XhForm,
     XhTable
   },
-  setup(props) {
+  setup(props, { emit }) {
     let innerTable: any = ref([])
     let count = ref(0)
     const createTableList = async (item: any) => {
@@ -100,6 +123,21 @@ export default defineComponent({
       }
       dialogVisible.value = false
     }
+    const handleOutClick = (item: any) => {
+      emit('materialsOutStore', {
+        ...item,
+        borrowInfoId: props.defaultInfo.borrowInfoId,
+        number: item.borrowNumber
+      })
+    }
+    const handleInClick = (item: any) => {
+      //console.log(item);
+      emit('materialsInStore', {
+        ...item,
+        borrowInfoId: props.defaultInfo.borrowInfoId,
+        number: item.borrowNumber
+      })
+    }
     watch(
       () => props.defaultInfo,
       (newVal) => {
@@ -114,7 +152,9 @@ export default defineComponent({
       handleConfirmClick,
       innerTable,
       count,
-      createTableList
+      createTableList,
+      handleOutClick,
+      handleInClick
     }
   }
 })
