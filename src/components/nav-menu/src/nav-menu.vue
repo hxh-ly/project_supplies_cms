@@ -10,7 +10,7 @@
       :isCollapsed="isCollapsed"
       class="el-menu-vertical"
       background-color="#0c2135"
-      :unique-opened="true"
+
       text-color="#b7bdc3"
       active-text-color="#0a60bd"
     >

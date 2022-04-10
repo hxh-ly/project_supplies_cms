@@ -1,8 +1,8 @@
 <!--  -->
 <template>
   <el-form :model="account" :rules="rules" label-width="60px" ref="formRef">
-    <el-form-item label="账号" prop="name">
-      <el-input v-model="account.name"></el-input>
+    <el-form-item label="账号" prop="userId">
+      <el-input v-model="account.userId"></el-input>
     </el-form-item>
     <el-form-item label="密码" prop="password">
       <el-input v-model="account.password" show-password></el-input>
@@ -20,7 +20,7 @@ export default defineComponent({
   setup(props) {
     const store = useStore()
     const account = reactive({
-      name: localCache.getItem('name') ?? '',
+      userId: localCache.getItem('userId') ?? '',
       password: localCache.getItem('password') ?? ''
     })
     const formRef = ref<InstanceType<typeof ElForm>>()
@@ -28,10 +28,10 @@ export default defineComponent({
       if (isKeepWord) {
         //加密
         console.log('记住密码了')
-        localCache.setItem('name', account.name)
+        localCache.setItem('userId', account.userId)
         localCache.setItem('password', account.password)
       } else {
-        localCache.delItem('name')
+        localCache.delItem('userId')
         localCache.delItem('password')
       }
       //表单验证

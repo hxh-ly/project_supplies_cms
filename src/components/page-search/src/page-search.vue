@@ -15,7 +15,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, provide, watch } from 'vue'
 import XhForm, { IForm } from '@/base-ui/form'
 export default defineComponent({
   props: {
@@ -28,14 +28,16 @@ export default defineComponent({
     XhForm
   },
   //发到user
-  emits: ['resetBtnClick', 'queryBtnClick'],
+  emits: ['resetBtnClick', 'queryBtnClick', 'changeQueryInfo'],
   setup(props, { emit }) {
     const originFormData: any = {}
     for (const item of props.searchFormConfig?.formItem ?? []) {
       originFormData[item.field] = ''
     }
     const formData = ref(originFormData)
-    console.log('formData', formData.value)
+    watch(formData, (newVal, oldVal) => {
+      emit('changeQueryInfo', newVal)
+    })
 
     const handleResetClick = () => {
       // for (const key in formOriginData) {
@@ -45,6 +47,8 @@ export default defineComponent({
       emit('resetBtnClick')
     }
     const handleQueryClick = () => {
+      //在这里需要把查询参数传递出去 ，修改就跟着 全局的查询参数
+
       emit('queryBtnClick', formData.value)
     }
 

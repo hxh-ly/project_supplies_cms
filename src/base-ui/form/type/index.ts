@@ -8,6 +8,7 @@ export interface formItem {
   otherOptions?: any
   downOptions?: any
   isHidden?: boolean
+  disable?:boolean
 }
 
 export interface IForm {
@@ -17,5 +18,6 @@ export interface IForm {
   itemStyle?: any
   colLayout?: any
   tableList?: any
-  rules?: any
+  rules?: any,
+
 }

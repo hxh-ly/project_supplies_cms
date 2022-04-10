@@ -6,6 +6,7 @@
       :label-width="labelWidth"
       :model="modelValue"
       :rules="rules"
+      :disabled="isDisable"
       ref="elNativeFromRef"
     >
       <el-row>
@@ -25,6 +26,7 @@
                   :model-value="modelValue[`${item.field}`]"
                   @update:model-value="handleValueChange($event, item.field)"
                   :prop="item.field"
+                  :disabled="item.disable"
                 ></el-input>
               </template>
               <template v-else-if="item.type == 'numInput'">
@@ -35,6 +37,7 @@
                   v-bind="item.otherOptions"
                   :model-value="modelValue[`${item.field}`]"
                   @update:model-value="handleValueChange($event, item.field)"
+                  :disabled="item.disable"
                 ></el-input-number>
               </template>
               <template v-else-if="item.type == 'select'">
@@ -45,14 +48,13 @@
                   @update:model-value="handleValueChange($event, item.field)"
                   style="width: 100%"
                   :prop="item.field"
+                  :disabled="item.disable"
                 >
                   <el-option
                     v-for="option in item.options"
                     :key="option.value"
                     :value="option.value"
-                  >
-                    {{ option.title }}
-                  </el-option>
+                  >{{ option.title }}</el-option>
                 </el-select>
               </template>
               <template v-else-if="item.type == 'datepicker'">
@@ -60,6 +62,7 @@
                   v-bind="item.otherOptions"
                   :model-value="modelValue[`${item.field}`]"
                   @update:model-value="handleValueChange($event, item.field)"
+                  :disabled="item.disable"
                 ></el-date-picker>
               </template>
               <template v-else-if="item.type == 'date'">
@@ -68,6 +71,7 @@
                   type="date"
                   @update:model-value="handleValueChange($event, item.field)"
                   :prop="item.field"
+                  :disabled="item.disable"
                 />
               </template>
               <template v-else-if="item.type == 'textArea'">
@@ -78,6 +82,7 @@
                   :prop="item.field"
                   :placeholder="item.placeholder"
                   @update:model-value="handleValueChange($event, item.field)"
+                  :disabled="item.disable"
                 />
               </template>
               <template v-else-if="item.type == 'selfDefine'">
@@ -98,9 +103,7 @@
                         v-for="option in downOptions"
                         :key="option.value"
                         :value="option.value"
-                      >
-                        {{ option.title }}
-                      </el-option>
+                      >{{ option.title }}</el-option>
                     </el-select>
                     <el-input-number
                       class="elect-box-num"
@@ -113,11 +116,7 @@
                     ></el-input-number>
                     <span class="del-text" @click="delSelect(index)">删除</span>
                   </div>
-                  <el-button
-                    class="select-materials-list-btn"
-                    @click="addMaterials"
-                    >添加借机物品</el-button
-                  >
+                  <el-button class="select-materials-list-btn" @click="addMaterials">添加借机物品</el-button>
                 </div>
               </template>
               <template v-else-if="item.type == 'upLoad'">
@@ -127,11 +126,12 @@
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload"
                   :prop="item.field"
+                  :disabled="item.disable"
                 >
                   <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-                  <el-icon v-else class="avatar-uploader-icon"
-                    ><plus
-                  /></el-icon>
+                  <el-icon v-else class="avatar-uploader-icon">
+                    <plus />
+                  </el-icon>
                 </el-upload>
               </template>
             </el-form-item>
@@ -189,6 +189,10 @@ export default defineComponent({
     },
     ruleForm: {
       type: Object
+    },
+    isDisable: {
+      type: Boolean,
+      default: false
     }
   },
 

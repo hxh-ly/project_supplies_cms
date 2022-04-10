@@ -2,9 +2,6 @@
 <template>
   <div class="">
     <div>
-      <el-icon size="20"><collection-tag /></el-icon>
-      <el-icon size="20"><bell /></el-icon>
-      <el-icon size="20"><chat-dot-round /></el-icon>
       <el-dropdown>
         <span class="el-dropdown-link">
           <el-icon size="20"><avatar /></el-icon>
@@ -19,7 +16,6 @@
             <el-dropdown-item @click="handleExitClick"
               >退出登录</el-dropdown-item
             >
-            <el-dropdown-item divided>Action 5</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -28,17 +24,17 @@
 </template>
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
-/* import { Avatar, Fold, ArrowDown, ChatDotRound, Bell, CollectionTag } from '@element-plus/icons' */
+import { Avatar, Fold, ArrowDown, ChatDotRound, Bell, CollectionTag } from '@element-plus/icons'
 import { useStore } from 'vuex'
 import localCache from '@/util/cache'
 import { useRouter } from 'vue-router'
 export default defineComponent({
   components: {
-    /*  ArrowDown,
+     ArrowDown,
     Avatar,
     ChatDotRound,
     Bell,
-    CollectionTag */
+    CollectionTag
   },
   setup(props) {
     const store = useStore()
@@ -47,7 +43,7 @@ export default defineComponent({
       localCache.delItem('token')
       router.push('/main')
     }
-    const userName = computed(() => store.state.login.userInfo.name)
+    const userName = computed(() => store.state.login.userInfo.name||store.state.login.userInfo.id)
     return {
       userName,
       handleExitClick

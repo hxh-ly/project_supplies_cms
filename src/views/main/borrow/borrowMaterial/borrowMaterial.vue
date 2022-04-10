@@ -4,6 +4,7 @@
       :searchFormConfig="searchFormConfigRef"
       @resetBtnClick="handleResetClick"
       @queryBtnClick="handleQueryClick"
+      @changeQueryInfo="handleChangeQueryInfo"
     />
     <page-content
       ref="pageContentRef"
@@ -14,20 +15,19 @@
       @cancelBtnClick="handleSwitchState"
       :isDgut="true"
     >
-      <template #gmtStart="scope">
-        {{ $filters.formatTime(scope.row.gmtStart) }}
+      <template #gmtStart="scope">{{ $filters.formatTime(scope.row.gmtStart) }}</template>
+      <template #gmtEnd="scope">{{ $filters.formatTime(scope.row.gmtEnd) }}</template>
+      <template #userInfo="scope">
+        {{
+          scope.row.userInfo?.account || 0
+        }}
       </template>
-      <template #gmtEnd="scope">
-        {{ $filters.formatTime(scope.row.gmtEnd) }}
-      </template>
-      <template #userInfo="scope">{{
-        scope.row.userInfo?.account || 0
-      }}</template>
       <template #userId="scope">{{ scope.row.userId || 0 }}</template>
     </page-content>
     <page-model
       ref="pageModalRef"
-      pageName="material"
+      fnType="edit"
+      pageName="borrowInfo"
       :modelConfig="modelFormConfigRef"
       @materialsInStore="handleInStore"
       @materialsOutStore="handleOutStore"
@@ -41,14 +41,14 @@
           v-bind="modelFormConfigRef.tableList"
           v-model:page="pageInfo"
         >
-        </xh-table> -->
+        </xh-table>-->
       </template>
     </page-model>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, reactive } from 'vue'
+import { defineComponent, computed, ref, reactive, provide, getCurrentInstance } from 'vue'
 import { userStore } from '@/store'
 import { searchFormConfig } from './config/search.config'
 import { contentTableConfig } from './config/content.config'
@@ -66,6 +66,8 @@ import {
   dgut_materialBorrow
 } from '@/serve/DgutRequest/dgutRequest'
 import { ElMessage } from 'element-plus'
+import { handleWorkRequest } from '@/util/handleRequest'
+import { log } from 'console'
 export default defineComponent({
   name: 'borrowMaterial',
   components: {
@@ -76,6 +78,8 @@ export default defineComponent({
   setup() {
     /*1 页面自己的逻辑：添加显示哪些列表项 编辑显示哪些列表项 */
     let materialsInfo = reactive([])
+    let queryInfo = ref({})
+    provide('queryInfo', queryInfo)
     let count = ref(0)
     const addDataFn = () => {
       var obj = modelFormConfig.formItem.find(
@@ -83,6 +87,7 @@ export default defineComponent({
       )
       obj!.isHidden = false
     }
+   // console.log('当前实例', getCurrentInstance())
     const editDataFn = async (item: any) => {
       //请求详情数据
       return (await dgut_applyDetail(undefined, item.borrowInfoId)).data.detail
@@ -111,77 +116,25 @@ export default defineComponent({
     const [pageContentRef, handleResetClick, handleQueryClick] = usePageSearch()
     const handleSwitchState = (data: any) => {
       //发出请求修改状态
-      console.log('我要取消了', data.borrowInfoId)
-      dgut_cancelBorrow(undefined, data.borrowInfoId)
-        .then((res) => {
-          if (!res.data.success) {
-            throw res.data.info
-          } else {
-            return res.data.info
-          }
-        })
-        .then((result) => {
-          ElMessage({
-            message: result,
-            type: 'success',
-            duration: 500
-          })
-        })
-        .catch((err) => {
-          ElMessage({
-            message: err,
-            type: 'error',
-            duration: 500
-          })
-        })
+      // console.log('我要取消了', data.borrowInfoId)
+      handleWorkRequest(() => dgut_cancelBorrow(undefined, data.borrowInfoId), () => {
+        console.log('我要取消')
+      })
     }
     const [pageModalRef, defaultInfo, handleNewData, handleEditData] =
       usePageModal(undefined, editDataFn)
     const handleInStore = (item: any) => {
       //console.log('入库', item)
-      dgut_materialReturn(undefined, item)
-        .then((res) => {
-          ;(pageModalRef as any).value.dialogVisible = false
-          if (res.data.success) {
-            ElMessage({
-              message: res.data.info,
-              type: 'success',
-              duration: 500
-            })
-          } else {
-            throw res.data.info
-          }
-        })
-        .catch((err) => {
-          ElMessage({
-            message: err,
-            type: 'error',
-            duration: 500
-          })
-        })
+      handleWorkRequest(() => dgut_materialReturn(undefined, item), () => { (pageModalRef as any).value.dialogVisible = false })
     }
     const handleOutStore = (item: any) => {
       // console.log('出库', item)
-      dgut_materialBorrow(undefined, item)
-        .then((res) => {
-          ;(pageModalRef as any).value.dialogVisible = false
-          if (res.data.success) {
-            ElMessage({
-              message: res.data.info,
-              type: 'success',
-              duration: 500
-            })
-          } else {
-            throw res.data.info
-          }
-        })
-        .catch((err) => {
-          ElMessage({
-            message: err,
-            type: 'error',
-            duration: 500
-          })
-        })
+      handleWorkRequest(() => dgut_materialBorrow(undefined, item), () => { (pageModalRef as any).value.dialogVisible = false })
+    }
+
+
+    const handleChangeQueryInfo = (v: any) => {
+      queryInfo.value = v
     }
     return {
       contentTableConfig,
@@ -206,7 +159,9 @@ export default defineComponent({
 
       //详情里的操作
       handleInStore,
-      handleOutStore
+      handleOutStore,
+      queryInfo,
+      handleChangeQueryInfo
     }
   }
 })

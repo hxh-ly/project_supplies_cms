@@ -32,13 +32,13 @@ export const contentTableConfig = {
         slotName: 'model'
       },
       {
-        prop: 'borrowNumber',
-        label: '剩余数量',
+        prop: 'borrowableNumber',
+        label: '可借用数量',
         minWidth: '80',
-        slotName: 'borrowNumber'
+        slotName: 'borrowableNumber'
       }
     ]
   },
-  isShowId: false,
-  isShowSelect: false
+  isShowId: true,
+  isShowSelect: true
 }

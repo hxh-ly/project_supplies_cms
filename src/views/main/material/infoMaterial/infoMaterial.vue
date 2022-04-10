@@ -4,6 +4,7 @@
       :searchFormConfig="searchFormConfig"
       @resetBtnClick="handleResetClick"
       @queryBtnClick="handleQueryClick"
+      @changeQueryInfo="handleChangeQueryInfo"
     />
     <page-content
       ref="pageContentRef"
@@ -20,21 +21,22 @@
           style="width: 60px; height: 60px"
           :src="scope.row.photo ? BASE_IMG_URL + scope.row.photo : ''"
           :preview-src-list="[scope.row.photo]"
-        >
-        </el-image>
+        ></el-image>
       </template>
-      <template #unitPrice="scope">{{
-        '¥' + (scope.row.unitPrice || 0)
-      }}</template>
+      <template #unitPrice="scope">
+        {{
+          '¥' + (scope.row.unitPrice || 0)
+        }}
+      </template>
       <template #gmtWarehoused="scope">
-        <slot
-          ><span>{{ $filters.formatTime(scope.row.gmtWarehoused) }}</span></slot
-        >
+        <slot>
+          <span>{{ $filters.formatTime(scope.row.gmtWarehoused) }}</span>
+        </slot>
       </template>
       <template #gmtBought="scope">
-        <slot
-          ><span>{{ $filters.formatTime(scope.row.gmtBought) }}</span></slot
-        >
+        <slot>
+          <span>{{ $filters.formatTime(scope.row.gmtBought) }}</span>
+        </slot>
       </template>
     </page-content>
     <page-model
@@ -42,13 +44,14 @@
       pageName="material"
       :modelConfig="modelFormConfigRef"
       :defaultInfo="defaultInfo"
+      @confirmClick="handleConfirmClick"
     ></page-model>
-    <page-imgprint ref="pageImgRef" class="page-print-model"> </page-imgprint>
+    <page-imgprint ref="pageImgRef" class="page-print-model"></page-imgprint>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, reactive } from 'vue'
+import { defineComponent, computed, ref, reactive, provide } from 'vue'
 import { userStore } from '@/store'
 import { searchFormConfig } from './config/search.config'
 import { contentTableConfig } from './config/content.config'
@@ -58,11 +61,13 @@ import pageSearch from '@/components/page-search'
 import pageModel from '@/components/page-model'
 import { usePageSearch } from '@/hooks/use-page-config'
 import { usePageModal } from '@/hooks/use-page-modal'
-import { dgut_getQcode, getMultiQRcode } from '@/serve/DgutRequest/dgutRequest'
+import { dgut_getQcode, getMultiQRcode, dgut_updateMaterialBaseInfo } from '@/serve/DgutRequest/dgutRequest'
 import { downLoadZip, downImgToPdf } from '@/util/fileSave'
 import { ElMessage } from 'element-plus'
 import PageImgprint from '@/components/page-imgprint/src/page-imgprint.vue'
 import { BASE_IMG_URL } from '@/const/constAttr'
+import { handleWorkRequest } from '@/util/handleRequest'
+import formatUtcString from '@/util/date-format'
 export default defineComponent({
   name: 'infoMaterial',
   components: {
@@ -72,6 +77,8 @@ export default defineComponent({
     PageImgprint
   },
   setup() {
+    let queryInfo = ref({})
+    provide('queryInfo', queryInfo)
     dgut_getQcode('/code', 'ylhao').then((res) => {
       console.log('图片接口', res)
     })
@@ -133,13 +140,25 @@ export default defineComponent({
         }
       }
     }
+
+    const handleChangeQueryInfo = (v: any) => {
+      queryInfo.value = v
+    }
+    const handleConfirmClick = async (v: any) => {
+
+      var updateInfo = { ...v, gmtBought: formatUtcString(v.gmtBought), gmtWarehoused: formatUtcString(v.gmtWarehoused) }
+
+      await handleWorkRequest(() => dgut_updateMaterialBaseInfo(undefined, updateInfo), () => { updateInfo = null });
+        (pageContentRef as any).value?.getPageData()
+    }
     return {
       contentTableConfig,
       searchFormConfig,
       pageContentRef,
       handleResetClick,
       handleQueryClick,
-
+      handleChangeQueryInfo,
+      handleConfirmClick,
       modelFormConfigRef,
 
       //弹窗
@@ -150,7 +169,8 @@ export default defineComponent({
       BASE_IMG_URL,
       //导出打印
       handlePrint,
-      pageImgRef
+      pageImgRef,
+      queryInfo
     }
   }
 })

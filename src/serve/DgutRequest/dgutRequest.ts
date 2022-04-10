@@ -81,12 +81,23 @@ export function dgut_materialReturn(
     isShowLoading: false
   })
 }
-
+//出库
 export function dgut_materialBorrow(
   url = '/borrowInfo/material/borrow',
   queryInfo: any
 ) {
   return dgutRequest.post<IDataType>({
+    url: url,
+    data: { ...queryInfo },
+    isShowLoading: false
+  })
+}
+//修改物资信息
+export function dgut_updateMaterialBaseInfo(
+  url = '/material/modify',
+  queryInfo: any
+) {
+  return dgutRequest.put<IDataType>({
     url: url,
     data: { ...queryInfo },
     isShowLoading: false

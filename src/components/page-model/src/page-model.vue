@@ -17,23 +17,16 @@
           <template #handle="scope">
             <div class="handle-btn">
               <el-button
-                v-if="scope.row.borrowState == 1"
+                v-if="isBorrow && scope.row.borrowState == 1"
                 @click="handleInClick(scope.row)"
                 type="success"
-                >入库</el-button
-              >
+              >入库</el-button>
               <el-button
-                v-else-if="scope.row.borrowState == 0"
+                v-else-if="isReturn && scope.row.borrowState == 0"
                 @click="handleOutClick(scope.row)"
                 type="primary"
-                >出库</el-button
-              >
-              <el-button
-                disabled
-                v-else-if="scope.row.borrowState == 2"
-                type="primary"
-                >禁止修改</el-button
-              >
+              >出库</el-button>
+              <el-button disabled v-else-if="scope.row.borrowState == 2" type="primary">禁止修改</el-button>
             </div>
           </template>
         </xh-table>
@@ -44,7 +37,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="handleConfirmClick">确定</el-button>
+          <el-button type="primary" @click="confirmClick">确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -55,14 +48,21 @@ import { defineComponent, reactive, ref, watch, nextTick } from 'vue'
 import XhForm from '@/base-ui/form'
 import XhTable from '@/base-ui/table'
 import { userStore } from '@/store'
+import { usePermission } from '@/hooks/use-permission'
 import {
   dgut_getQcode,
   dgut_applyDetail
 } from '@/serve/DgutRequest/dgutRequest'
+import { ElMessageBox } from 'element-plus'
+
 /* xhfrom的配置 */
 export default defineComponent({
-  emits: ['materialsInStore', 'materialsOutStore'],
+  emits: ['materialsInStore', 'materialsOutStore', 'confirmClick'],
   props: {
+    fnType: {
+      type: String,
+      default: ''
+    },
     title: {
       type: String,
       default: ''
@@ -108,18 +108,17 @@ export default defineComponent({
     const dialogVisible = ref(false)
     const formData = ref<any>({})
     const store = userStore()
-    const handleConfirmClick = () => {
-      if (Object.keys(props.defaultInfo).length) {
-        store.dispatch('system/editPageDataAction', {
-          pageName: props.pageName,
-          editData: { ...formData.value, ...props.otherInfo },
-          id: props.defaultInfo.id
-        })
-      } else {
-        store.dispatch('system/createPageDataAction', {
-          pageName: props.pageName,
-          newData: { ...formData.value }
-        })
+    const confirmClick = () => {
+      if (isModified) {
+        ElMessageBox.confirm('确认修改?')
+          .then(() => {
+            //可复用性不高
+           emit('confirmClick', {...props.defaultInfo, ...formData.value })
+          })
+          .catch(() => {
+            // catch error
+          })
+
       }
       dialogVisible.value = false
     }
@@ -138,23 +137,33 @@ export default defineComponent({
         number: item.borrowNumber
       })
     }
+    const isBorrow = usePermission(props.pageName || '', 'material:borrow')
+    const isReturn = usePermission(props.pageName || '', 'material:return')
+    const isModified = usePermission(props.pageName || '', 'modify')
     watch(
       () => props.defaultInfo,
-      (newVal) => {
+      (newVal: any) => {
         for (const item of props.modelConfig?.formItem) {
           formData.value[`${item.field}`] = newVal[`${item.field}`]
+          //可能是来自搜素 而不是 修改
+
+          props!!.modelConfig!!['isDisable'] = !isModified
         }
       }
     )
+
     return {
       dialogVisible,
       formData,
-      handleConfirmClick,
+      confirmClick,
       innerTable,
       count,
       createTableList,
       handleOutClick,
-      handleInClick
+      handleInClick,
+      isBorrow,
+      isReturn,
+      isModified
     }
   }
 })

@@ -6,12 +6,20 @@ export function handleWorkRequest(fn: any, polyFill?: any) {
       if (polyFill) {
         polyFill()
       }
-      if (res.data && res.data.success) {
-        ElMessage({
-          message: res.data?.info || res.data?.message,
-          icon: 'success',
-          duration: 500
-        })
+      if (res.data) {
+        if (res.data.success) {
+          ElMessage({
+            message: res.data?.info || res.data?.message,
+            icon: 'success',
+            duration: 500
+          })
+          return
+        } else {
+          throw res.data?.info || res.data?.message
+        }
+      }
+      if (res.errorMessage) {
+        throw res.errorMessage
       }
     })
     .catch((err) => {

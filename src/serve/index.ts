@@ -30,7 +30,16 @@ export const dgutRequest = new HXHRequest({
   timeout: TIMEOUT,
   interceptors: {
     requestInterceptor: (config: any) => {
-      config.headers['auth-token'] = 'ylhao666'
+      /*
+      真正实现登录 */
+      const token = localCache.getItem('token')
+      if (token) {
+        if (config.headers) {
+          config.headers['auth-token'] = `${token}`
+        }
+      }
+
+      // config.headers['auth-token'] = 'ylhao666'
       return config
     },
     resInterceptor: (config) => {

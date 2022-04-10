@@ -19,16 +19,14 @@
         </template>
       </xh-form>
     </div>
-    <!--    <page-model
-    ref="pageModalRef"
-    pageName="material"
-    :modelConfig="dialogConfigRef"
-    :defaultInfo="defaultInfo"
-    :hasTable="true"
-  >
-    <template #tableList>
-    </template>
-  </page-model> -->
+    <keep-alive>
+      <material-list-dialog
+        ref="pageModalRef"
+        :allMaterials="allMaterials"
+        :modelConfig="dialogConfigRef"
+        @addMaterialItem="handleAddMaterial"
+      ></material-list-dialog>
+    </keep-alive>
   </div>
 </template>
 <script lang="ts">
@@ -43,12 +41,13 @@ import {
 import { modelFormConfig } from './config/model.config'
 import { userStore } from '@/store'
 import XhForm from '@/base-ui/form'
-import { dgut_setOnApplyForm } from '@/serve/DgutRequest/dgutRequest'
+import { dgut_setOnApplyForm, dgut_getMaterialListData } from '@/serve/DgutRequest/dgutRequest'
 import { normalRequest } from '@/serve/index'
 import { ElMessage } from 'element-plus'
 import pageModel from '@/components/page-model'
 import { contentTableConfig } from './config/content.config'
 import { handleWorkRequest } from '@/util/handleRequest'
+import materialListDialog from './cmp/materialListDialog.vue'
 export default defineComponent({
   props: {
     title: {
@@ -74,9 +73,16 @@ export default defineComponent({
   },
   components: {
     XhForm,
-    pageModel
+    pageModel,
+    materialListDialog
   },
   setup(props) {
+    //0 请求所有的物资数据
+    let allMaterials = ref({})
+    dgut_getMaterialListData('/material/list', { size: 50, current: 1 }).then((res: any) => {
+      allMaterials.value = res.data?.list?.records || []
+      //console.log(allMaterials.value);
+    })
     //1 全局的日期格式化
     const cns: any = getCurrentInstance()
     const $filters = cns.appContext.config.globalProperties.$filters
@@ -97,26 +103,17 @@ export default defineComponent({
     const dialogConfigRef = computed(() => {
       return contentTableConfig
     })
-    const pageModalRef = ref<InstanceType<typeof pageModel>>()
+    const pageModalRef = ref<InstanceType<typeof materialListDialog>>()
     const handleResetValue = () => {
       //在这里弹窗弹窗
-      /*  if (pageModalRef.value) {
+      //异步请求所有数据
+      if (pageModalRef.value) {
         pageModalRef.value.dialogVisible = true
-      } */
-      if (
-        formData.value['materialIdNumberMap'] &&
-        formData.value['materialIdNumberMap'].length > 0
-      ) {
-        formData.value['materialIdNumberMap'].push({ id: '', num: 0 })
-      } else {
-        formData.value['materialIdNumberMap'] = [{ id: '', num: 0 }]
       }
     }
     const handleDelSelect = (index: number) => {
       formData.value['materialIdNumberMap'].splice(index, 1)
     }
-
-    const store = userStore()
     const handleConfirmClick = () => {
       let obj: any = {}
       let map: any = {}
@@ -136,30 +133,12 @@ export default defineComponent({
           formData.value = {}
         }
       )
-      /*     dgut_setOnApplyForm('/borrowInfo/apply', obj,()=>{
-        obj = null
-          formData.value = {}
-      }).then((res) => {
-          obj = null
-          formData.value = {}
-          console.log(res)
-          if (res.data.success) {
-            ElMessage({
-              message: res.data.message,
-              type: 'success',
-              duration: 500
-            })
-          } else {
-            throw res.data.message
-          }
-        })
-        .catch((err) => {
-          ElMessage({
-            message: err,
-            type: 'error',
-            duration: 500
-          })
-        }) */
+    }
+    const handleAddMaterial = (v: any) => {
+      (formData.value['materialIdNumberMap']) || (formData.value['materialIdNumberMap'] = [])
+      v.forEach((item: any) => {
+        formData.value['materialIdNumberMap'].push({ id: item.materialId, num: 0 })
+      })
     }
     return {
       formData,
@@ -170,7 +149,9 @@ export default defineComponent({
       //选择弹窗
       pageModalRef,
       //添加
-      dialogConfigRef
+      dialogConfigRef,
+      allMaterials,
+      handleAddMaterial
     }
   }
 })

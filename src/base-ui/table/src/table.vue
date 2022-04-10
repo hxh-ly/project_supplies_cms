@@ -6,7 +6,7 @@
         <div class="header-left">{{ title }}</div>
         <div class="header-handle">
           <slot name="headerHandler"></slot>
-          <slot name="rightPrint"> </slot>
+          <slot name="rightPrint"></slot>
         </div>
       </slot>
     </div>
@@ -16,20 +16,10 @@
       border
       @selection-change="handleSelectionChange"
       v-bind="childrenProps"
+      :max-height="height"
     >
-      <el-table-column
-        v-if="isShowSelect"
-        type="selection"
-        width="80"
-        align="center"
-      />
-      <el-table-column
-        v-if="isShowId"
-        label="id"
-        type="index"
-        width="80"
-        align="center"
-      />
+      <el-table-column v-if="isShowSelect" type="selection" width="80" align="center" />
+      <el-table-column v-if="isShowId" label="id" type="index" width="80" align="center" />
 
       <template v-for="item in propList" :key="item.prop">
         <el-table-column align="center" v-bind="item" show-overflow-tooltip>
@@ -54,8 +44,7 @@
           :page-size="page.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="listCount"
-        >
-        </el-pagination>
+        ></el-pagination>
       </slot>
     </div>
   </div>
@@ -101,6 +90,9 @@ export default defineComponent({
     showFooter: {
       type: Boolean,
       default: true
+    },
+    height: {
+      type: Number
     }
   },
   emits: ['emitSelectionChange', 'update:page'],

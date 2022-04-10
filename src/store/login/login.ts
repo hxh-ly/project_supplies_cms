@@ -5,10 +5,9 @@ import router from '@/router'
 import { mapMenuToRoutes, mapMenusToPermissions } from '@/util/map-menu'
 import {
   accountLoginRequest,
-  requestUserInfoById,
-  requestUserMenusRoleId
-} from '@/serve/login/login'
-import { IAccount } from '@/serve/login/type'
+  requestUserMenusRole
+} from '@/serve/DgutRequest/login/login'
+import { IAccount } from '@/serve/DgutRequest/login/type'
 import localCache from '@/util/cache'
 const login: Module<ILoginState, IRootStore> = {
   namespaced: true,
@@ -25,20 +24,25 @@ const login: Module<ILoginState, IRootStore> = {
       //1
 
       const loginData = await accountLoginRequest(playload)
-      const { id, token } = loginData.data
+      const { id, name, token } = loginData.data
+      //...用户信息
+      const userInfo = { name, id }
+      commit('changeUserInfo', userInfo)
       commit('changeToken', token)
+      localCache.setItem('userInfo', userInfo)
       localCache.setItem('token', token)
       /* 请求菜单，角色数据 */
       dispatch('getInitialDataAction', null, { root: true })
-      //2 用户信息
-      const LoginUserInfo = (await requestUserInfoById(id)).data
-      localCache.setItem('userInfo', LoginUserInfo)
-      commit('changeUserInfo', LoginUserInfo)
-      //3 菜单
-      const UserInfoMenuRes = await requestUserMenusRoleId(
-        LoginUserInfo.role.id
-      )
+
+      //3 拿token请求菜单
+      const UserInfoMenuRes = await requestUserMenusRole()
       const userMenus = UserInfoMenuRes.data
+      console.log(
+        '%c process--- accountLoginAction',
+        'background:#aaa;color:#bada55',
+        userMenus
+      )
+
       localCache.setItem('userMenus', userMenus)
       commit('changeUserMenus', userMenus)
       //console.log('从登录页进来才会执行，接着跳到main');
@@ -85,7 +89,7 @@ const login: Module<ILoginState, IRootStore> = {
       state.userMenus = userMenus
       //4 将用户的权限操作保存
       state.permission = mapMenusToPermissions(userMenus)
-      // console.log('%c function---mapMenusToPermissions','background:rgb(60, 182, 219)' , '当前用户权限', state.permission)
+       console.log('%c function---mapMenusToPermissions','background:rgb(60, 182, 219)' , '当前用户权限', state.permission)
       // console.log('路由添加前', userMenus)
       const routes = mapMenuToRoutes(userMenus)
       //console.log('%c function---mapMenuToRoutes','background:rgb(60, 182, 219)' , '当前用户拿到路由记录', routes)

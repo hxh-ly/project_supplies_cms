@@ -37,7 +37,7 @@ const system: Module<ISystemState, IRootStore> = {
         const list = pageResult.data.list?.records
         //TODO
         const totalCount = pageResult.data.list?.records.length
-        console.log('list数组', pageResult)
+        //console.log('list数组', pageResult)
         const changePageName =
           pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
         commit(`change${changePageName}List`, list)

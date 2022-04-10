@@ -38,7 +38,7 @@ const store = createStore<IRootStore>({
       state.entriesMenu = list
     },
     changeEntriesMaterial(state, list: any) {
-      console.log('init物品list', list)
+      //console.log('init物品list', list)
       state.entriesMaterial = list
     }
   },
@@ -51,22 +51,24 @@ const store = createStore<IRootStore>({
       const borrowStateList = (await dgut_requestBorrowStateList(undefined))
         .data
       commit('changeEntriesBorrowState', borrowStateList)
-      const RoleResult = await getPageListData('/role/list', {
+     /*  const RoleResult = await getPageListData('/role/list', {
         offset: 0,
         size: 1000
       })
       const { list: roleList } = RoleResult.data
-      commit('changeEntriesRole', roleList)
-      const menuResult = await getPageListData('/menu/list', {})
+      commit('changeEntriesRole', roleList) */
+
+   /*    const menuResult = await getPageListData('/menu/list', {})
       const { list: menuList } = menuResult.data
-      //console.log('````````````````', menuList)
       commit('changeEntriesMenu', menuList)
+      */
       //顺便拿到所有的物品菜单
       const materialResult = await dgut_getMaterialListData('/material/list', {
         size: 50,
         current: 1
       })
       const { records: materialList } = materialResult.data.list
+      //console.log('所有物品',materialList);
       commit('changeEntriesMaterial', materialList)
     }
   },
