@@ -2,34 +2,21 @@ import { IForm } from '@/base-ui/form'
 export const searchFormConfig: IForm = {
   labelWidth: '120px',
   formItem: [
+    { field: 'userId', label: '账号',type: 'input', placeholder: '请输入账号' },
     {
-      field: 'id',
-      type: 'input',
-      label: 'id',
-      placeholder: '请输入id',
-      otherOptions: {}
-    },
-    {
-      field: 'name',
+      field: 'account',
       type: 'input',
       label: '用户名',
       placeholder: '请输入用户名'
     },
     {
-      field: 'realname',
-      type: 'input',
-      label: '真实姓名',
-      placeholder: '请输入真实性名',
-      otherOptions: {}
-    },
-    {
-      field: 'cellphone',
+      field: 'telNumber',
       type: 'input',
       label: '电话号码',
       placeholder: '请输入电话号码',
       otherOptions: {}
     },
-    {
+  /*   {
       field: 'enable',
       type: 'select',
       label: '用户状态',
@@ -38,8 +25,8 @@ export const searchFormConfig: IForm = {
         { title: '启用', value: 1 },
         { title: '禁用', value: 0 }
       ]
-    },
-    {
+    }, */
+  /*   {
       field: 'createAt',
       type: 'datepicker',
       label: '创建时间',
@@ -49,7 +36,7 @@ export const searchFormConfig: IForm = {
         endPlaceholder: '结束时间',
         type: 'daterange'
       }
-    }
+    } */
   ],
   itemStyle: {
     padding: '10px 40px'

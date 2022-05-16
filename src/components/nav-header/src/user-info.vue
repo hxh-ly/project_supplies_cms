@@ -24,13 +24,20 @@
 </template>
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
-import { Avatar, Fold, ArrowDown, ChatDotRound, Bell, CollectionTag } from '@element-plus/icons'
+import {
+  Avatar,
+  Fold,
+  ArrowDown,
+  ChatDotRound,
+  Bell,
+  CollectionTag
+} from '@element-plus/icons'
 import { useStore } from 'vuex'
 import localCache from '@/util/cache'
 import { useRouter } from 'vue-router'
 export default defineComponent({
   components: {
-     ArrowDown,
+    ArrowDown,
     Avatar,
     ChatDotRound,
     Bell,
@@ -43,7 +50,9 @@ export default defineComponent({
       localCache.delItem('token')
       router.push('/main')
     }
-    const userName = computed(() => store.state.login.userInfo.name||store.state.login.userInfo.id)
+    const userName = computed(
+      () => store.state.login.userInfo.name || store.state.login.userInfo.id
+    )
     return {
       userName,
       handleExitClick

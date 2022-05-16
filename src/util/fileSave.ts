@@ -34,13 +34,11 @@ export function downImgToPdf(
     let index = 0
     while (index < count) {
       if (rowAddPage > docY) {
-        console.log('不够放了')
         break
       }
       if (colAddPage > docX) {
         rowAddPage += imgHeight
         colAddPage = 0
-        console.log('该换行了')
       }
       recordPdf.addImage(
         item.url,

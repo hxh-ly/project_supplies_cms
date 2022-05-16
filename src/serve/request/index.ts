@@ -12,7 +12,7 @@ class HXHRequest {
   constructor(config: HXHRequestConfig) {
     //1 创建
     this.instance = axios.create(config)
-    //初始化选项
+    //初始化选项(来自config的拦截)
     this.interceptors = config.interceptors
     this.isShowLoading = config.isShowLoading ?? DEFAULT_LOADING
     //来自config

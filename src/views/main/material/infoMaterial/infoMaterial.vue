@@ -15,6 +15,8 @@
       @handlePrint="handlePrint"
       :isDgut="true"
       :isPrint="true"
+      :requestInfo='requestInfo'
+      :allPermissionBtn="allPermissionBtn"
     >
       <template #image="scope">
         <el-image
@@ -24,9 +26,7 @@
         ></el-image>
       </template>
       <template #unitPrice="scope">
-        {{
-          '¥' + (scope.row.unitPrice || 0)
-        }}
+        {{ '¥' + (scope.row.unitPrice || 0) }}
       </template>
       <template #gmtWarehoused="scope">
         <slot>
@@ -61,7 +61,11 @@ import pageSearch from '@/components/page-search'
 import pageModel from '@/components/page-model'
 import { usePageSearch } from '@/hooks/use-page-config'
 import { usePageModal } from '@/hooks/use-page-modal'
-import { dgut_getQcode, getMultiQRcode, dgut_updateMaterialBaseInfo } from '@/serve/DgutRequest/dgutRequest'
+import {
+  dgut_getQcode,
+  getMultiQRcode,
+  dgut_updateMaterialBaseInfo
+} from '@/serve/DgutRequest/dgutRequest'
 import { downLoadZip, downImgToPdf } from '@/util/fileSave'
 import { ElMessage } from 'element-plus'
 import PageImgprint from '@/components/page-imgprint/src/page-imgprint.vue'
@@ -77,11 +81,14 @@ export default defineComponent({
     PageImgprint
   },
   setup() {
+    const allPermissionBtn = reactive([
+      { title: 'isUpdate', name: '修改', flag: 'update' },
+      { title: 'isQuery', name: '查询', flag: 'query' },
+      {title:'isPrint',name:'导出打印',flag:'print'}
+    ])
+
     let queryInfo = ref({})
     provide('queryInfo', queryInfo)
-    dgut_getQcode('/code', 'ylhao').then((res) => {
-      console.log('图片接口', res)
-    })
     /*1 页面自己的逻辑：添加显示哪些列表项 编辑显示哪些列表项 */
     const addDataFn = () => {
       var obj = modelFormConfig.formItem.find(
@@ -145,11 +152,22 @@ export default defineComponent({
       queryInfo.value = v
     }
     const handleConfirmClick = async (v: any) => {
+      var updateInfo = {
+        ...v,
+        gmtBought: formatUtcString(v.gmtBought),
+        gmtWarehoused: formatUtcString(v.gmtWarehoused)
+      }
 
-      var updateInfo = { ...v, gmtBought: formatUtcString(v.gmtBought), gmtWarehoused: formatUtcString(v.gmtWarehoused) }
-
-      await handleWorkRequest(() => dgut_updateMaterialBaseInfo(undefined, updateInfo), () => { updateInfo = null });
-        (pageContentRef as any).value?.getPageData()
+      await handleWorkRequest(
+        () => dgut_updateMaterialBaseInfo(undefined, updateInfo),
+        () => {
+          updateInfo = null
+        }
+      )
+      ;(pageContentRef as any).value?.getPageData()
+    }
+    const requestInfo= {
+      get:'/material/list'
     }
     return {
       contentTableConfig,
@@ -168,9 +186,11 @@ export default defineComponent({
       defaultInfo,
       BASE_IMG_URL,
       //导出打印
+      allPermissionBtn,
       handlePrint,
       pageImgRef,
-      queryInfo
+      queryInfo,
+      requestInfo
     }
   }
 })

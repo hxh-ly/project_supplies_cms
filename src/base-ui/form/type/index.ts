@@ -8,16 +8,17 @@ export interface formItem {
   otherOptions?: any
   downOptions?: any
   isHidden?: boolean
-  disable?:boolean
+  disable?: boolean
+  isMultiple?:boolean
 }
 
 export interface IForm {
+  actionType?:string
   modelWidth?: string
   labelWidth: string
   formItem: formItem[]
   itemStyle?: any
   colLayout?: any
   tableList?: any
-  rules?: any,
-
+  rules?: any
 }

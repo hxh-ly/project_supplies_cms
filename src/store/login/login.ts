@@ -45,6 +45,9 @@ const login: Module<ILoginState, IRootStore> = {
 
       localCache.setItem('userMenus', userMenus)
       commit('changeUserMenus', userMenus)
+
+      //4 请求
+
       //console.log('从登录页进来才会执行，接着跳到main');
       //4 跳到首页
       router.push('/main')
@@ -89,7 +92,12 @@ const login: Module<ILoginState, IRootStore> = {
       state.userMenus = userMenus
       //4 将用户的权限操作保存
       state.permission = mapMenusToPermissions(userMenus)
-       console.log('%c function---mapMenusToPermissions','background:rgb(60, 182, 219)' , '当前用户权限', state.permission)
+      console.log(
+        '%c function---mapMenusToPermissions',
+        'background:rgb(60, 182, 219)',
+        '当前用户权限',
+        state.permission
+      )
       // console.log('路由添加前', userMenus)
       const routes = mapMenuToRoutes(userMenus)
       //console.log('%c function---mapMenuToRoutes','background:rgb(60, 182, 219)' , '当前用户拿到路由记录', routes)

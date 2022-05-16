@@ -4,7 +4,7 @@ export function dgut_getMaterialListData(url: string, queryInfo: any): any {
   return dgutRequest.get<IDataType>({
     url: url,
     params: { ...queryInfo },
-    isShowLoading: false
+    isShowLoading: true
   })
 }
 //请求获取二维码的图片

@@ -6,7 +6,9 @@ export const usePageModal = (addFnCb?: CallbackFn, editFnCb?: CallbackFn) => {
   const pageModalRef = ref<InstanceType<typeof pageModel>>()
   const defaultInfo = ref({})
   //
-  const handleNewData = () => {
+  const handleNewData = (type:any,item:any) => {
+    console.log('asdasdas---type',type);
+
     defaultInfo.value = {}
     if (pageModalRef.value) {
       pageModalRef.value.dialogVisible = true
@@ -18,7 +20,7 @@ export const usePageModal = (addFnCb?: CallbackFn, editFnCb?: CallbackFn) => {
     console.log('点击编辑的默认数据来源 defaultInfo.value', defaultInfo.value)
 
     if (pageModalRef.value) {
-     // pageModalRef.value.totalInfoItem = { ...item }
+      // pageModalRef.value.totalInfoItem = { ...item }
       pageModalRef.value.dialogVisible = true
     }
     if (pageModalRef.value && editFnCb && pageModalRef.value.hasTable) {
@@ -26,6 +28,9 @@ export const usePageModal = (addFnCb?: CallbackFn, editFnCb?: CallbackFn) => {
       /*    pageModalRef.value.innerTable.value = await editFnCb(item)
       console.log('进edit了嘛',pageModalRef.value.innerTable); */
     } else editFnCb && editFnCb(item)
+  }
+  const handleDeleteData = async(id:any) => {
+
   }
   return [pageModalRef, defaultInfo, handleNewData, handleEditData]
 }

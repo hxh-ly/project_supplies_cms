@@ -26,7 +26,9 @@ export const xhrequest = new HXHRequest({
 })
 
 export const dgutRequest = new HXHRequest({
-  baseURL: '/dgut',
+  // baseURL: 'http://4383d8d6-8af9-4a2a-92e6-896bfc356b38.mock.pstmn.io',
+  // baseURL:'http://119.91.237.88:8082',
+  baseURL:'/dgut',
   timeout: TIMEOUT,
   interceptors: {
     requestInterceptor: (config: any) => {

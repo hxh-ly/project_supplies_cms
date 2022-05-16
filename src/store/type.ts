@@ -9,6 +9,8 @@ interface IRootStore {
   entriesMenu: any[]
   entriesMaterial: any[]
   entriesBorrowState: any[]
+  entriesPermissions: any[]
+  rolePermissions: any[]
 }
 interface IRootWithModule {
   login: ILoginState

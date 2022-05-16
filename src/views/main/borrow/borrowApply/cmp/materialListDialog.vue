@@ -21,25 +21,23 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref,onUnmounted,onMounted } from 'vue'
+import { defineComponent, ref, onUnmounted, onMounted } from 'vue'
 import XhTable from '@/base-ui/table'
 export default defineComponent({
   props: {
     allMaterials: {
-      type: Object,
-
+      type: Object
     },
     modelConfig: {
       type: Object,
       require: true
-    },
-
+    }
   },
   components: {
     XhTable
   },
   emits: ['addMaterialItem'],
-  setup(props,{emit}) {
+  setup(props, { emit }) {
     const dialogVisible = ref(false)
     const pageInfo = ref({})
     const formMaterial = ref(null)
@@ -50,12 +48,12 @@ export default defineComponent({
     const confirmClick = () => {
       //console.log(formMaterial.value)
       emit('addMaterialItem', formMaterial.value)
-      dialogVisible.value=false
+      dialogVisible.value = false
     }
-    onMounted(()=>{
+    onMounted(() => {
       console.log('mounted')
     })
-    onUnmounted(()=>{
+    onUnmounted(() => {
       console.log('销毁了')
     })
     return {
@@ -68,6 +66,4 @@ export default defineComponent({
   }
 })
 </script>
-<style scoped lang="less">
-
-</style>
+<style scoped lang="less"></style>

@@ -1,10 +1,10 @@
 import { ElMessage } from 'element-plus'
-export function handleWorkRequest(fn: any, polyFill?: any) {
+function handleWorkRequest(fn: any, polyFill?: any) {
   //console.log(fn);
   return Promise.resolve(fn.call(null))
     .then((res) => {
       if (polyFill) {
-        polyFill()
+        polyFill(res)
       }
       if (res.data) {
         if (res.data.success) {
@@ -30,3 +30,12 @@ export function handleWorkRequest(fn: any, polyFill?: any) {
       })
     })
 }
+
+const handleResetValue = (formData: any, EmptyObj: any) => {
+  const nativeObj: any = EmptyObj
+  for (let key in nativeObj) {
+    formData.value[key] = nativeObj[key]
+  }
+}
+
+export { handleWorkRequest, handleResetValue }

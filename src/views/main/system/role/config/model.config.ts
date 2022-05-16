@@ -3,13 +3,19 @@ export const modelFormConfig: IForm = {
   labelWidth: '80px',
   formItem: [
     {
+      field: 'roleId',
+      type: 'input',
+      label: '角色id',
+      disable:true,
+    },
+    {
       field: 'name',
       type: 'input',
-      label: '用户名',
+      label: '角色名',
       placeholder: '请输入用户名'
     },
     {
-      field: 'intro',
+      field: 'description',
       type: 'input',
       label: '角色介绍',
       placeholder: '请输入角色介绍'

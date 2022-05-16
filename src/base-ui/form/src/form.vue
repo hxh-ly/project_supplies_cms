@@ -49,12 +49,14 @@
                   style="width: 100%"
                   :prop="item.field"
                   :disabled="item.disable"
+                   :multiple="item.isMultiple"
                 >
                   <el-option
                     v-for="option in item.options"
                     :key="option.value"
-                    :value="option.value"
-                  >{{ option.title }}</el-option>
+                    :value="option.title"
+                    >{{ option.title }}</el-option
+                  >
                 </el-select>
               </template>
               <template v-else-if="item.type == 'datepicker'">
@@ -103,7 +105,8 @@
                         v-for="option in downOptions"
                         :key="option.value"
                         :value="option.value"
-                      >{{ option.title }}</el-option>
+                        >{{ option.title }}</el-option
+                      >
                     </el-select>
                     <el-input-number
                       class="elect-box-num"
@@ -116,7 +119,11 @@
                     ></el-input-number>
                     <span class="del-text" @click="delSelect(index)">删除</span>
                   </div>
-                  <el-button class="select-materials-list-btn" @click="addMaterials">添加借机物品</el-button>
+                  <el-button
+                    class="select-materials-list-btn"
+                    @click="addMaterials"
+                    >添加借机物品</el-button
+                  >
                 </div>
               </template>
               <template v-else-if="item.type == 'upLoad'">
@@ -143,7 +150,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref, watch, reactive } from 'vue'
+import { defineComponent, PropType, ref, watch, reactive,onMounted } from 'vue'
 import { formItem } from '../type'
 import type FormInstance from 'element-plus'
 import { ElForm, ElMessage, ElUpload } from 'element-plus'
@@ -195,9 +202,11 @@ export default defineComponent({
       default: false
     }
   },
-
   emits: ['update:modelValue', 'resetFormConfigRef', 'delSelect'],
   setup(props, { emit }) {
+    onMounted(()=>{
+      console.log('.....');
+    })
     // 外层的formData【key】=''  这样改能影响到引用
     /*     let formData = ref({ ...props.modelValue })
      */

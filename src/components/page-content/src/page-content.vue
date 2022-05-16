@@ -1,28 +1,24 @@
 <!--  -->
 <template>
   <div class="page-content">
-    <xh-table
-      :listData="userList"
-      :listCount="userCount"
-      v-bind="contentTableConfig"
-      v-model:page="pageInfo"
-      @emitSelectionChange="emitSelectionChange"
-    >
+    <xh-table :listData="userList" :listCount="userCount" v-bind="contentTableConfig" v-model:page="pageInfo"
+      @emitSelectionChange="emitSelectionChange">
       <template #headerHandler>
-        <el-button v-if="isCreate" type="primary" size="default" @click="handleNewClick">新建用户</el-button>
+        <el-button v-if="checkIsShow('isAdd')!=null" type="primary" size="default" @click="handleNewClick">{{ checkIsShow('isAdd').name }}
+        </el-button>
+        <el-button v-if="checkIsShow('isAddMenu')!=null" type="primary" size="default" @click="handleNewClick('add_menu')">{{ checkIsShow('isAddMenu').name }}
+        </el-button>
       </template>
       <template #rightPrint>
-        <el-button v-if="isPrint" type="primary" size="default" @click="handleToPrint">导出打印</el-button>
+        <el-button v-if="checkIsShow('isPrint')!=null" type="primary" size="default" @click="handleToPrint">{{ checkIsShow('isPrint').name }}</el-button>
       </template>
       <!-- id  -->
       <!-- 选中 -->
       <!-- 操作 -->
       <template #status="scope">
         <slot>
-          <el-button
-            size="mini"
-            :type="scope.row.enable ? 'success' : 'primary'"
-          >{{ scope.row.enable ? '启用' : '禁用' }}</el-button>
+          <el-button size="mini" :type="scope.row.enable ? 'success' : 'primary'">{{ scope.row.enable ? '启用' : '禁用' }}
+          </el-button>
         </slot>
       </template>
       <template #createAt="scope">
@@ -37,25 +33,19 @@
       </template>
       <template #handle="scope">
         <div class="handle-btn">
-          <el-button
-            v-if="isDelete"
-            @click="handleDelClick(scope.row)"
-            icon="el-icon-remove"
-            type="text"
-          >删除</el-button>
-          <el-button
-            v-if="isUpdate"
-            @click="handleEditClick(scope.row)"
-            icon="el-icon-edit"
-            type="text"
-          >编辑</el-button>
-          <el-button @click="handleEditClick(scope.row)" icon="el-icon-edit" type="text">详情</el-button>
-          <el-button
-            v-if="scope.row.borrowState == 0"
-            @click="handleCancelClick(scope.row)"
-            icon="el-icon-edit"
-            type="text"
-          >取消申请</el-button>
+          <el-button v-if="checkIsShow('isDelete')" @click="handleDelClick(scope.row)" icon="el-icon-remove"
+            type="text">删除</el-button>
+          <el-button v-if="checkIsShow('isUpdate')" @click="handleEditClick({...scope.row})" icon="el-icon-edit" type="text">
+            编辑</el-button>
+          <el-button v-if="!checkIsShow('isUpdate')" @click="handleEditClick(scope.row)" icon="el-icon-edit"
+            type="text">详情</el-button>
+            <!-- 自定义权限的添加 -->
+          <el-button v-if="checkIsShow('isAddPage')&&scope.row.level == 1" @click="handleNewClick('add_page',scope.row)" icon="el-icon-remove"
+            type="text">{{checkIsShow('isAddPage').name}}</el-button>
+             <el-button v-if="checkIsShow('isAddPre')&&scope.row.level == 2" @click="handleNewClick('add_permission',scope.row)" icon="el-icon-remove"
+            type="text">{{checkIsShow('isAddPre').name}}</el-button>
+          <el-button v-if="scope.row.borrowState == 0" @click="handleCancelClick(scope.row)" icon="el-icon-edit"
+            type="text">取消申请</el-button>
         </div>
       </template>
       <!-- 这部分的动态配置出来的 -->
@@ -68,11 +58,22 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, computed, ref, watch, reactive, inject,getCurrentInstance } from 'vue'
+import {
+  defineComponent,
+  computed,
+  ref,
+  watch,
+  reactive,
+  inject,
+  getCurrentInstance,
+  toRefs
+} from 'vue'
 
 import XhTable from '@/base-ui/table'
 import { userStore } from '@/store'
 import { usePermission } from '@/hooks/use-permission'
+import { request } from 'http'
+const path = require('path')
 export default defineComponent({
   props: {
     contentTableConfig: {
@@ -90,6 +91,20 @@ export default defineComponent({
     isPrint: {
       type: Boolean,
       default: false
+    },
+    urlPre: {
+      type: String,
+      default: ''
+    },
+    listOtherParams: {
+      type: Object,
+      default: null
+    },
+    requestInfo: {
+      type: Object
+    },
+    allPermissionBtn: {
+      type: Array
     }
   },
   components: {
@@ -101,43 +116,36 @@ export default defineComponent({
     //1 双向绑定pageInfo  当前页，当前条数
     const pageInfo = ref({ currentPage: 1, pageSize: 10 })
 
-    let queryInfo:any = inject('queryInfo')
+    let queryInfo: any = inject('queryInfo')
+
     watch(pageInfo, (newVal) => {
       //console.log('换页', {...queryInfo.value})
       //获取 inject的参数
-      getPageData({...queryInfo.value})
+      getPageData({ ...queryInfo.value })
     })
     //2 发送网络请求
     const getPageData = (queryInfo: any = {}) => {
-      //if (!isQuery) return
       if (props.isDgut) {
         store.dispatch('system/getPageListAction', {
           isDgut: true,
           pageName: props.pageName,
-          queryInfo: {
+          url: props!.requestInfo?.get,
+          queryInfo: Object.assign({
             size: pageInfo.value.pageSize,
             current: pageInfo.value.currentPage,
-            ...queryInfo
-          }
-        })
-      } else {
-        store.dispatch('system/getPageListAction', {
-          /* pageUrl: '/users/list', */
-          pageName: props.pageName,
-          queryInfo: {
-            offset: (pageInfo.value.currentPage - 1) * pageInfo.value.pageSize,
-            size: pageInfo.value.pageSize,
-            ...queryInfo
-          }
+          }, queryInfo, props.listOtherParams)
         })
       }
     }
-    //5 拿到权限菜单按钮
-    const isCreate = usePermission(props.pageName, 'create')
-    const isUpdate = usePermission(props.pageName, 'update')
-    const isDelete = usePermission(props.pageName, 'delete')
-    const isQuery = usePermission(props.pageName, 'query')
-
+    const getAllPermissionBtn = (allExt: any = []) => {
+      return allExt.map((item: any = {}) => {
+        return { ...item, show: usePermission(props.pageName, item?.flag) }
+      })
+    }
+    const allBtnShowLists = ref(getAllPermissionBtn(props.allPermissionBtn))
+    const checkIsShow = (name:any,arr: any = allBtnShowLists.value) => {
+      return arr.find((item: any) => name == item.title)
+    }
     getPageData()
     //3 vuex中能获取数据
     const userList = computed(() =>
@@ -157,17 +165,22 @@ export default defineComponent({
         return true
       }
     )
-    //console.log('动态字段otherPropSlots', otherPropSlots)
+    // console.log('动态字段otherPropSlots', otherPropSlots)
     // 5 删除 | 创建 |更新
     const handleDelClick = (item: any) => {
       console.log(item)
+      let id = item[`${props.pageName}Id`]
+      if(props.requestInfo?.delete) {
       store.dispatch('system/deletePageData', {
+        url:path.resolve(props.requestInfo?.delete,id),
         pageName: props.pageName,
-        id: item.id
+        requestInfo:props.requestInfo,
+        listOtherParams:props.listOtherParams
       })
+      }
     }
-    const handleNewClick = () => {
-      emit('newBtnClick')
+    const handleNewClick = (type:any,item:any) => {
+      emit('newBtnClick',type,item)
     }
     const handleEditClick = (item: any) => {
       emit('editBtnClick', item)
@@ -191,10 +204,6 @@ export default defineComponent({
       getPageData,
       pageInfo,
       otherPropSlots,
-      //权限相关
-      isCreate,
-      isUpdate,
-      isDelete,
       //操作相关
       handleDelClick,
       handleNewClick,
@@ -203,9 +212,13 @@ export default defineComponent({
       //导出打印相关
       emitSelectionChange,
       handleToPrint,
-      selectPrintItem
+      selectPrintItem,
+      // ...toRefs(getAllPermissionBtn(props.allPermissionBtn))
+      allBtnShowLists,
+      checkIsShow
     }
   }
 })
 </script>
-<style scoped lang="less"></style>
+<style scoped lang="less">
+</style>

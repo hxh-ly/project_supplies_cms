@@ -1,39 +1,24 @@
 <!--  -->
 <template>
   <div class="page-model">
-    <el-dialog
-      v-model="dialogVisible"
-      :title="title"
-      :width="modelConfig.modelWidth || '30%'"
-      destroy-on-close
-    >
+    <el-dialog v-model="dialogVisible" :title="title" :width="modelConfig?.modelWidth || '30%'" destroy-on-close
+      draggable>
       <template v-if="hasTable">
-        <xh-table
-          :listData="innerTable"
-          :listCount="count"
-          v-bind="modelConfig.tableList"
-          v-model:page="pageInfo"
-        >
+        <xh-table :listData="innerTable" :listCount="count" v-bind="modelConfig?.tableList" v-model:page="pageInfo">
           <template #handle="scope">
             <div class="handle-btn">
-              <el-button
-                v-if="isBorrow && scope.row.borrowState == 1"
-                @click="handleInClick(scope.row)"
-                type="success"
-              >入库</el-button>
-              <el-button
-                v-else-if="isReturn && scope.row.borrowState == 0"
-                @click="handleOutClick(scope.row)"
-                type="primary"
-              >出库</el-button>
+              <el-button v-if="isBorrow && scope.row.borrowState == 1" @click="handleInClick(scope.row)" type="success">
+                入库</el-button>
+              <el-button v-else-if="isReturn && scope.row.borrowState == 0" @click="handleOutClick(scope.row)"
+                type="primary">出库</el-button>
               <el-button disabled v-else-if="scope.row.borrowState == 2" type="primary">禁止修改</el-button>
             </div>
           </template>
         </xh-table>
       </template>
-      <xh-form v-bind="modelConfig" v-model="formData"></xh-form>
+      <xh-form v-bind="modelConfig" v-model="formData" ref="xhFormRef" :rules="modelConfig?.rules"></xh-form>
       <!-- <slot name='tableList'></slot> -->
-
+      <slot></slot>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
@@ -44,7 +29,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, nextTick } from 'vue'
+import { defineComponent, reactive, ref, watch, nextTick, getCurrentInstance, onMounted, toRaw } from 'vue'
 import XhForm from '@/base-ui/form'
 import XhTable from '@/base-ui/table'
 import { userStore } from '@/store'
@@ -86,6 +71,12 @@ export default defineComponent({
     hasTable: {
       type: Boolean,
       default: false
+    },
+    requestInfo: {
+      type: Object
+    },
+    listOtherParams:{
+      type:Object
     }
   },
   components: {
@@ -93,6 +84,8 @@ export default defineComponent({
     XhTable
   },
   setup(props, { emit }) {
+
+    let that = getCurrentInstance()
     let innerTable: any = ref([])
     let count = ref(0)
     const createTableList = async (item: any) => {
@@ -108,20 +101,39 @@ export default defineComponent({
     const dialogVisible = ref(false)
     const formData = ref<any>({})
     const store = userStore()
-    const confirmClick = () => {
-      if (isModified) {
-        ElMessageBox.confirm('确认修改?')
-          .then(() => {
-            //可复用性不高
-           emit('confirmClick', {...props.defaultInfo, ...formData.value })
-          })
-          .catch(() => {
-            // catch error
-          })
-
+    const handleSelectProp = (e: any) => {
+      let queryInfo: any = {...e}
+      for (let i = 0; i < props.modelConfig!.formItem.length; i++) {
+        let downSelectObj = props.modelConfig!.formItem[i]
+        //如果是下拉
+        if (downSelectObj.type == 'select') {
+          let field: any = downSelectObj?.field
+          if (downSelectObj && field) {
+            let eField = toRaw(e[`${field}`])
+            let trueVal = null
+            //如果是数组 说明下拉是可以多选的
+            if (Array.isArray(eField)) {
+              let arr: any = []
+              downSelectObj?.options?.forEach((item: any) => {
+                if (eField.indexOf(item.title) > -1) {
+                  arr.push(item.value)
+                }
+              })
+              trueVal = arr;
+            }
+            // 如果是单选
+            else {
+              trueVal = downSelectObj?.options?.find((item: any) => item.title == e![`${field}`]).value
+            }
+            queryInfo = { ...queryInfo, [`${field}`]: trueVal }
+          }
+          console.log(queryInfo);
+        }
       }
-      dialogVisible.value = false
+
+      return queryInfo
     }
+
     const handleOutClick = (item: any) => {
       emit('materialsOutStore', {
         ...item,
@@ -139,19 +151,57 @@ export default defineComponent({
     }
     const isBorrow = usePermission(props.pageName || '', 'material:borrow')
     const isReturn = usePermission(props.pageName || '', 'material:return')
-    const isModified = usePermission(props.pageName || '', 'modify')
+    const isModified = usePermission(props.pageName || '', 'update')
+    //添加菜单权限
     watch(
       () => props.defaultInfo,
       (newVal: any) => {
+        console.log('defaultInfo', newVal);
         for (const item of props.modelConfig?.formItem) {
           formData.value[`${item.field}`] = newVal[`${item.field}`]
           //可能是来自搜素 而不是 修改
-
-          props!!.modelConfig!!['isDisable'] = !isModified
+          //props!.modelConfig!['isDisable'] = !isModified
         }
+        if ('password' in formData.value && !formData.value['password']) {
+          formData.value['password'] = ''
+        }
+        console.log(formData.value);
+
       }
     )
+    onMounted(() => {
 
+    })
+    const confirmClick = () => {
+      if (Object.keys(props.defaultInfo).length) {
+        //编辑debugger
+        if (isModified) {
+          store.dispatch('system/editPageDataAction', {
+            url: props.requestInfo!.update,
+            requestInfo: props.requestInfo,
+            pageName: props.pageName,
+            editData: { ...props.defaultInfo, ...formData.value},
+            listOtherParams:{... props.listOtherParams}
+          })
+          //编辑后还要去操作其他接口的
+          emit('confirmClick', { ...props.defaultInfo, ...formData.value }, 'edit')
+        }
+      } else {
+        if (props.requestInfo?.add) {
+          let queryInfo = handleSelectProp(formData.value)
+          //debugger
+          store.dispatch('system/createPageDataAction', {
+            url: props.requestInfo!.add,
+            requestInfo: props.requestInfo,
+            pageName: props.pageName,
+            newData: { ...props.defaultInfo, ...queryInfo, ...props.otherInfo,... props.listOtherParams }
+          })
+        }
+        emit('confirmClick', { ...props.defaultInfo, ...formData.value }, props.modelConfig?.actionType || 'add')
+      }
+
+      dialogVisible.value = false
+    }
     return {
       dialogVisible,
       formData,
@@ -163,9 +213,10 @@ export default defineComponent({
       handleInClick,
       isBorrow,
       isReturn,
-      isModified
+      isModified,
     }
   }
 })
 </script>
-<style scoped lang="less"></style>
+<style scoped lang="less">
+</style>

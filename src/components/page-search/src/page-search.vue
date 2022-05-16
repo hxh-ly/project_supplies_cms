@@ -3,7 +3,7 @@
   <div class="page-search">
     <xh-form v-bind="searchFormConfig" v-model="formData">
       <template #header>
-        <h1 class="title">高级检索</h1>
+        <!-- <h1 class="title">检索</h1> -->
       </template>
       <template #footer>
         <div class="right-btn">

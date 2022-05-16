@@ -19,7 +19,9 @@ const store = createStore<IRootStore>({
       entriesMenu: [],
       entriesMaterial: [],
       entriesDepartment: [], //项目组
-      entriesBorrowState: [] //借机状态
+      entriesBorrowState: [], //借机状态,
+      entriesPermissions: [],
+      rolePermissions:[]
     }
   },
   mutations: {
@@ -40,6 +42,13 @@ const store = createStore<IRootStore>({
     changeEntriesMaterial(state, list: any) {
       //console.log('init物品list', list)
       state.entriesMaterial = list
+    },
+    changeEntriesPermissions(state, list: any) {
+      state.entriesPermissions = list
+    },
+    changeEntriesRolePermissions(state,data:any)
+    {
+      state.rolePermissions = data
     }
   },
   actions: {
@@ -51,25 +60,43 @@ const store = createStore<IRootStore>({
       const borrowStateList = (await dgut_requestBorrowStateList(undefined))
         .data
       commit('changeEntriesBorrowState', borrowStateList)
-     /*  const RoleResult = await getPageListData('/role/list', {
-        offset: 0,
-        size: 1000
+      const RoleResult = await getPageListData('/auth/role/list', {
+        paginated: false,
+        current: 1,
+        size: 50
       })
-      const { list: roleList } = RoleResult.data
-      commit('changeEntriesRole', roleList) */
-
-   /*    const menuResult = await getPageListData('/menu/list', {})
-      const { list: menuList } = menuResult.data
-      commit('changeEntriesMenu', menuList)
-      */
-      //顺便拿到所有的物品菜单
+      if(RoleResult.code==200) {
+        const { list: roleList } = RoleResult.data
+        commit('changeEntriesRole', roleList)
+      }
+      // 权限——菜单
+      /* const permissionsResult = await getPageListData('/auth/permission/list', {
+        treed: true,
+        current: 1,
+        size: 50,
+        paginated: false
+      })
+      if(permissionsResult.code==200) {
+        const permissionsList = permissionsResult.data.tree
+        const rolePermissions = permissionsResult.data.rolePermissions
+        // console.log('请求了tree', permissionsResult)
+        // console.log('请求了tree后', rolePermissions)
+        commit('changeEntriesPermissions', permissionsList)
+        commit('changeEntriesRolePermissions',rolePermissions)
+      } */
+      //所有物资
       const materialResult = await dgut_getMaterialListData('/material/list', {
         size: 50,
         current: 1
       })
       const { records: materialList } = materialResult.data.list
-      //console.log('所有物品',materialList);
       commit('changeEntriesMaterial', materialList)
+      //获取所有项目组
+    },
+    async changeTreeAction({commit},payload:any) {
+      console.log('changeTreeAction',payload);
+      commit('changeEntriesRolePermissions',payload.permissionLists)
+      //debugger
     }
   },
   modules: {

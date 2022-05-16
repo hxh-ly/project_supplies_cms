@@ -1,6 +1,6 @@
 interface ISystemState {
-  usersList: any[]
-  usersCount: number
+  userList: any[]
+  userCount: number
   roleList: any[]
   roleCount: number
   goodsList: any[]
@@ -10,6 +10,8 @@ interface ISystemState {
   materialList: any[]
   materialCount: number
   borrowInfoList: any[]
-  borrowInfoCount: number
+  borrowInfoCount: number,
+  permissionList:any[],
+  permissionCount:number
 }
 export { ISystemState }

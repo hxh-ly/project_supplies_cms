@@ -1,39 +1,24 @@
 <template>
   <div class="user">
-    <page-search
-      :searchFormConfig="searchFormConfigRef"
-      @resetBtnClick="handleResetClick"
-      @queryBtnClick="handleQueryClick"
-      @changeQueryInfo="handleChangeQueryInfo"
-    />
-    <page-content
-      ref="pageContentRef"
-      :contentTableConfig="contentTableConfig"
-      pageName="borrowInfo"
-      @newBtnClick="handleNewData"
-      @editBtnClick="handleEditData"
-      @cancelBtnClick="handleSwitchState"
-      :isDgut="true"
-    >
-      <template #gmtStart="scope">{{ $filters.formatTime(scope.row.gmtStart) }}</template>
-      <template #gmtEnd="scope">{{ $filters.formatTime(scope.row.gmtEnd) }}</template>
+    <page-search :searchFormConfig="searchFormConfigRef" @resetBtnClick="handleResetClick"
+      @queryBtnClick="handleQueryClick" @changeQueryInfo="handleChangeQueryInfo" />
+    <page-content ref="pageContentRef" :contentTableConfig="contentTableConfig" pageName="borrowInfo"
+      @newBtnClick="handleNewData" @editBtnClick="handleEditData" @cancelBtnClick="handleSwitchState" :isDgut="true"
+      :requestInfo="requestInfo">
+      <template #gmtStart="scope">{{
+          $filters.formatTime(scope.row.gmtStart)
+      }}</template>
+      <template #gmtEnd="scope">{{
+          $filters.formatTime(scope.row.gmtEnd)
+      }}</template>
       <template #userInfo="scope">
-        {{
-          scope.row.userInfo?.account || 0
-        }}
+        {{ scope.row.userInfo?.account || 0 }}
       </template>
       <template #userId="scope">{{ scope.row.userId || 0 }}</template>
     </page-content>
-    <page-model
-      ref="pageModalRef"
-      fnType="edit"
-      pageName="borrowInfo"
-      :modelConfig="modelFormConfigRef"
-      @materialsInStore="handleInStore"
-      @materialsOutStore="handleOutStore"
-      :defaultInfo="defaultInfo"
-      :hasTable="true"
-    >
+    <page-model ref="pageModalRef" fnType="edit" pageName="borrowInfo" :modelConfig="modelFormConfigRef"
+      @materialsInStore="handleInStore" @materialsOutStore="handleOutStore" :defaultInfo="defaultInfo" :hasTable="true"
+      :requestInfo="requestInfo">
       <template #tableList>
         <!--  <xh-table
           :listData="materialsInfo"
@@ -48,7 +33,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, reactive, provide, getCurrentInstance } from 'vue'
+import {
+  defineComponent,
+  computed,
+  ref,
+  reactive,
+  provide,
+  getCurrentInstance
+} from 'vue'
 import { userStore } from '@/store'
 import { searchFormConfig } from './config/search.config'
 import { contentTableConfig } from './config/content.config'
@@ -87,7 +79,7 @@ export default defineComponent({
       )
       obj!.isHidden = false
     }
-   // console.log('当前实例', getCurrentInstance())
+    // console.log('当前实例', getCurrentInstance())
     const editDataFn = async (item: any) => {
       //请求详情数据
       return (await dgut_applyDetail(undefined, item.borrowInfoId)).data.detail
@@ -117,24 +109,39 @@ export default defineComponent({
     const handleSwitchState = (data: any) => {
       //发出请求修改状态
       // console.log('我要取消了', data.borrowInfoId)
-      handleWorkRequest(() => dgut_cancelBorrow(undefined, data.borrowInfoId), () => {
-        console.log('我要取消')
-      })
+      handleWorkRequest(
+        () => dgut_cancelBorrow(undefined, data.borrowInfoId),
+        () => {
+          console.log('我要取消')
+        }
+      )
     }
     const [pageModalRef, defaultInfo, handleNewData, handleEditData] =
       usePageModal(undefined, editDataFn)
     const handleInStore = (item: any) => {
       //console.log('入库', item)
-      handleWorkRequest(() => dgut_materialReturn(undefined, item), () => { (pageModalRef as any).value.dialogVisible = false })
+      handleWorkRequest(
+        () => dgut_materialReturn(undefined, item),
+        () => {
+          ; (pageModalRef as any).value.dialogVisible = false
+        }
+      )
     }
     const handleOutStore = (item: any) => {
       // console.log('出库', item)
-      handleWorkRequest(() => dgut_materialBorrow(undefined, item), () => { (pageModalRef as any).value.dialogVisible = false })
+      handleWorkRequest(
+        () => dgut_materialBorrow(undefined, item),
+        () => {
+          ; (pageModalRef as any).value.dialogVisible = false
+        }
+      )
     }
-
 
     const handleChangeQueryInfo = (v: any) => {
       queryInfo.value = v
+    }
+    const requestInfo = {
+      get: '/borrowInfo/list'
     }
     return {
       contentTableConfig,
@@ -161,7 +168,8 @@ export default defineComponent({
       handleInStore,
       handleOutStore,
       queryInfo,
-      handleChangeQueryInfo
+      handleChangeQueryInfo,
+      requestInfo
     }
   }
 })

@@ -26,8 +26,8 @@ export const searchFormConfig: IForm = {
       label: '固定资产',
       placeholder: '请选择',
       options: [
-        { title: '是', value: 1 },
-        { title: '否', value: 0 }
+        { title: '是', value: '是', realVal: 0 },
+        { title: '否', value: '否', realVal: 1 }
       ]
     },
     {

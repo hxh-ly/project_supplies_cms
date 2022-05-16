@@ -11,10 +11,10 @@ export function accountLoginRequest(account: IAccount) {
     data: account
   })
 }
-export function requestUserMenusRole() {
-  console.log('%c','background:orange','请求-requestUserMenusRole-权限菜单');
+export function   requestUserMenusRole() {
+  console.log('%c', 'background:orange', '请求-requestUserMenusRole-权限菜单')
   return dgutRequest.get<IDataType>({
-    url: LoginApi.UserMenus+'/list',
+    url: LoginApi.UserMenus + '/list',
     isShowLoading: false
   })
 }

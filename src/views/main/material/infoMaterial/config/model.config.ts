@@ -7,10 +7,9 @@ export const modelFormConfig: IForm = {
       field: 'name',
       type: 'input',
       label: '物资名称',
-      placeholder: '请输入物资名称',
-
+      placeholder: '请输入物资名称'
     },
-  /*   {
+    /*   {
       field: 'isFixedAssets',
       type: 'select',
       label: '固定资产',
@@ -50,7 +49,7 @@ export const modelFormConfig: IForm = {
       label: '被借用数',
       placeholder: '被借用的数量',
       options: [],
-      disable:true
+      disable: true
     },
 
     {
@@ -66,7 +65,7 @@ export const modelFormConfig: IForm = {
       label: '总数量',
       placeholder: '总数量',
       options: [],
-      disable:true
+      disable: true
     },
     {
       field: 'unitPrice',
@@ -81,7 +80,7 @@ export const modelFormConfig: IForm = {
       label: '未归还数',
       placeholder: '未归还的数量',
       options: [],
-      disable:true
+      disable: true
     },
     {
       field: 'detail',

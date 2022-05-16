@@ -41,7 +41,10 @@ import {
 import { modelFormConfig } from './config/model.config'
 import { userStore } from '@/store'
 import XhForm from '@/base-ui/form'
-import { dgut_setOnApplyForm, dgut_getMaterialListData } from '@/serve/DgutRequest/dgutRequest'
+import {
+  dgut_setOnApplyForm,
+  dgut_getMaterialListData
+} from '@/serve/DgutRequest/dgutRequest'
 import { normalRequest } from '@/serve/index'
 import { ElMessage } from 'element-plus'
 import pageModel from '@/components/page-model'
@@ -79,10 +82,12 @@ export default defineComponent({
   setup(props) {
     //0 请求所有的物资数据
     let allMaterials = ref({})
-    dgut_getMaterialListData('/material/list', { size: 50, current: 1 }).then((res: any) => {
-      allMaterials.value = res.data?.list?.records || []
-      //console.log(allMaterials.value);
-    })
+    dgut_getMaterialListData('/material/list', { size: 50, current: 1 }).then(
+      (res: any) => {
+        allMaterials.value = res.data?.list?.records || []
+        //console.log(allMaterials.value);
+      }
+    )
     //1 全局的日期格式化
     const cns: any = getCurrentInstance()
     const $filters = cns.appContext.config.globalProperties.$filters
@@ -135,9 +140,13 @@ export default defineComponent({
       )
     }
     const handleAddMaterial = (v: any) => {
-      (formData.value['materialIdNumberMap']) || (formData.value['materialIdNumberMap'] = [])
+      formData.value['materialIdNumberMap'] ||
+        (formData.value['materialIdNumberMap'] = [])
       v.forEach((item: any) => {
-        formData.value['materialIdNumberMap'].push({ id: item.materialId, num: 0 })
+        formData.value['materialIdNumberMap'].push({
+          id: item.materialId,
+          num: 0
+        })
       })
     }
     return {

@@ -12,8 +12,8 @@ const system: Module<ISystemState, IRootStore> = {
   namespaced: true,
   state: () => {
     return {
-      usersList: [],
-      usersCount: 0,
+      userList: [],
+      userCount: 0,
       roleList: [],
       roleCount: 0,
       goodsList: [],
@@ -23,29 +23,29 @@ const system: Module<ISystemState, IRootStore> = {
       materialList: [],
       materialCount: 0,
       borrowInfoList: [],
-      borrowInfoCount: 0
+      borrowInfoCount: 0,
+      permissionList: [], //
+      permissionCount: 0
     }
   },
   actions: {
     async getPageListAction({ commit }, payload: any) {
       const pageName = payload.pageName
-      const pageUrl = `${pageName}/list`
+      const pageUrl = `${payload.url}`
       let pageResult = null
       //毕设
       if (payload.isDgut) {
         pageResult = await dgut_getMaterialListData(pageUrl, payload.queryInfo)
-        const list = pageResult.data.list?.records
+        let list = pageResult.data.list?.records || pageResult.data.list
+        let totalCount = 0
         //TODO
-        const totalCount = pageResult.data.list?.records.length
-        //console.log('list数组', pageResult)
-        const changePageName =
-          pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
-        commit(`change${changePageName}List`, list)
-        commit(`change${changePageName}Count`, totalCount)
-      } else {
-        //网络请求
-        pageResult = await getPageListData(pageUrl, payload.queryInfo)
-        const { list, totalCount } = pageResult.data
+        if (list) {
+          totalCount = list?.length
+          //console.log('list数组', pageResult)
+        } else {
+          list = pageResult.data.tree
+          totalCount = list?.length
+        }
         const changePageName =
           pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
         commit(`change${changePageName}List`, list)
@@ -53,48 +53,54 @@ const system: Module<ISystemState, IRootStore> = {
       }
     },
     async deletePageData(context, playload: any) {
-      const { pageName, id } = playload
-      const pageUrl = `${pageName}/${id}`
-      await deletePageData(pageUrl)
+      const { url,pageName,requestInfo,listOtherParams } = playload
+      await deletePageData(url)
       context.dispatch('getPageListAction', {
-        pageName,
-        queryInfo: {
-          offset: 0,
-          size: 10
-        }
+        isDgut: true,
+        url: requestInfo.get,
+        pageName: pageName,
+        queryInfo: Object.assign({
+          size: 10,
+          current: 1,
+          ...listOtherParams
+        })
       })
     },
     async createPageDataAction({ dispatch }, payload: any) {
-      const { pageName, newData } = payload
-      const pageUrl = `/${pageName}`
-      await createPageData(pageUrl, newData)
+      const { pageName, newData, url,requestInfo } = payload
+      await createPageData(url, newData)
       dispatch('getPageListAction', {
+        isDgut: true,
+        url: requestInfo.get,
         pageName: pageName,
-        queryInfo: {
-          offset: 0,
-          size: 10
-        }
+        queryInfo: Object.assign({
+          size: 10,
+          current: 1
+        })
       })
     },
     async editPageDataAction({ dispatch }, playload: any) {
-      const { pageName, editData, id } = playload
-      const pageUrl = `/${pageName}/${id}`
-      await editPageData(pageUrl, editData)
+      const { pageName, editData, url, requestInfo,listOtherParams } = playload
+      debugger
+      await editPageData(url, editData)
       dispatch('getPageListAction', {
+        isDgut: true,
+        url: requestInfo.get,
         pageName: pageName,
-        queryInfo: {
-          offset: 0,
-          size: 10
-        }
+        queryInfo: Object.assign({
+          size: 10,
+          current: 1,
+          ...listOtherParams
+        })
       })
     }
   },
   mutations: {
-    changeUsersList(state, data: any) {
-      state.usersList = data
+    changeUserList(state, data: any) {
+      state.userList = data
     },
-    changeUsersCount(state, data: any) {
-      state.usersCount = data
+    changeUserCount(state, data: any) {
+      state.userCount = data
     },
     changeRoleList(state, data: any) {
       state.roleList = data
@@ -125,6 +131,13 @@ const system: Module<ISystemState, IRootStore> = {
     },
     changeBorrowInfoCount(state, data: any) {
       state.borrowInfoCount = data
+    },
+    changePermissionList(state, data: any) {
+      state.permissionList = data
+    },
+    changePermissionCount(state, data: any) {
+      state.permissionCount = data
+      // console.log(state.permissionCount)
     }
   },
   getters: {
