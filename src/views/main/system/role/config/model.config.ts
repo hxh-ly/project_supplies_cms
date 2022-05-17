@@ -6,7 +6,7 @@ export const modelFormConfig: IForm = {
       field: 'roleId',
       type: 'input',
       label: '角色id',
-      disable:true,
+      disable: true
     },
     {
       field: 'name',

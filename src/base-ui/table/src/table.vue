@@ -33,7 +33,12 @@
       />
 
       <template v-for="item in propList" :key="item.prop">
-        <el-table-column align="center" v-bind="item" show-overflow-tooltip v-if="!item?.isHidden">
+        <el-table-column
+          align="center"
+          v-bind="item"
+          show-overflow-tooltip
+          v-if="!item?.isHidden"
+        >
           <template #default="scope">
             <!-- slot 作用域插槽 1写在template上   2 slot传出数据 -->
             <slot :name="item.slotName" :row="scope.row">

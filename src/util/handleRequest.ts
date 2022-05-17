@@ -6,7 +6,7 @@ function handleWorkRequest(fn: any, polyFill?: any) {
       if (polyFill) {
         polyFill(res)
       }
-      if (res.data) {
+      if (res.data&&res.code==200) {
         if (res.data.success) {
           ElMessage({
             message: res.data?.info || res.data?.message,
@@ -33,7 +33,7 @@ function handleWorkRequest(fn: any, polyFill?: any) {
 
 const handleResetValue = (formData: any, EmptyObj: any) => {
   const nativeObj: any = EmptyObj
-  for (let key in nativeObj) {
+  for (const key in nativeObj) {
     formData.value[key] = nativeObj[key]
   }
 }

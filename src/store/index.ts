@@ -21,7 +21,7 @@ const store = createStore<IRootStore>({
       entriesDepartment: [], //项目组
       entriesBorrowState: [], //借机状态,
       entriesPermissions: [],
-      rolePermissions:[]
+      rolePermissions: []
     }
   },
   mutations: {
@@ -46,8 +46,7 @@ const store = createStore<IRootStore>({
     changeEntriesPermissions(state, list: any) {
       state.entriesPermissions = list
     },
-    changeEntriesRolePermissions(state,data:any)
-    {
+    changeEntriesRolePermissions(state, data: any) {
       state.rolePermissions = data
     }
   },
@@ -65,7 +64,7 @@ const store = createStore<IRootStore>({
         current: 1,
         size: 50
       })
-      if(RoleResult.code==200) {
+      if (RoleResult.code == 200) {
         const { list: roleList } = RoleResult.data
         commit('changeEntriesRole', roleList)
       }
@@ -93,9 +92,9 @@ const store = createStore<IRootStore>({
       commit('changeEntriesMaterial', materialList)
       //获取所有项目组
     },
-    async changeTreeAction({commit},payload:any) {
-      console.log('changeTreeAction',payload);
-      commit('changeEntriesRolePermissions',payload.permissionLists)
+    async changeTreeAction({ commit }, payload: any) {
+      console.log('changeTreeAction', payload)
+      commit('changeEntriesRolePermissions', payload.permissionLists)
       //debugger
     }
   },

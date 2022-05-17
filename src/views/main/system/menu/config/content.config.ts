@@ -1,10 +1,10 @@
 export const contentTableConfig = {
   title: '菜单列表',
   propList: [
-    { prop: 'label', label: '用户管理', minWidth: '200', },
+    { prop: 'label', label: '用户管理', minWidth: '200' },
     { prop: 'level', label: '类型', minWidth: '60' },
     { prop: 'pagePath', label: '菜单url', minWidth: '100' },
-   /*  { prop: 'icon', label: '菜单icon', minWidth: '100' },
+    /*  { prop: 'icon', label: '菜单icon', minWidth: '100' },
     { prop: 'permission', label: '按钮权限', minWidth: '100' }, */
     /* {
       prop: 'createAt',

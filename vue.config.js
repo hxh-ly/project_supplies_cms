@@ -2,8 +2,10 @@ const path = require('path')
 const AutoImport = require('unplugin-auto-import/webpack')
 const Components = require('unplugin-vue-components/webpack')
 const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
+const env = process.env.NODE_ENV === "development"
+console.log(process.env.NODE_ENV,env);
 module.exports = {
-  //publicPath: './',
+
   lintOnSave: false,
   // 1 vue-cli的方法
   // 3 链式
@@ -13,7 +15,7 @@ module.exports = {
     .set('components','@/components')
   }
    */
-  publicPath: '/',
+  publicPath: env?'./': '/material',
   configureWebpack: {
     resolve: {
       alias: {

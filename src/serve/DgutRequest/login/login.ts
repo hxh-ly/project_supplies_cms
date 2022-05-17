@@ -11,7 +11,7 @@ export function accountLoginRequest(account: IAccount) {
     data: account
   })
 }
-export function   requestUserMenusRole() {
+export function requestUserMenusRole() {
   console.log('%c', 'background:orange', '请求-requestUserMenusRole-权限菜单')
   return dgutRequest.get<IDataType>({
     url: LoginApi.UserMenus + '/list',

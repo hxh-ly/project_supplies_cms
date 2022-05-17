@@ -29,7 +29,7 @@ const system: Module<ISystemState, IRootStore> = {
     }
   },
   actions: {
-    async getPageListAction({ commit }, payload: any) {
+    async getPageListAction({ commit,dispatch }, payload: any) {
       const pageName = payload.pageName
       const pageUrl = `${payload.url}`
       let pageResult = null
@@ -50,10 +50,14 @@ const system: Module<ISystemState, IRootStore> = {
           pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
         commit(`change${changePageName}List`, list)
         commit(`change${changePageName}Count`, totalCount)
+        if(pageName=='permission')
+        {
+            dispatch('login/flashMenu',null,{ root: true })
+        }
       }
     },
     async deletePageData(context, playload: any) {
-      const { url,pageName,requestInfo,listOtherParams } = playload
+      const { url, pageName, requestInfo, listOtherParams } = playload
       await deletePageData(url)
       context.dispatch('getPageListAction', {
         isDgut: true,
@@ -67,7 +71,7 @@ const system: Module<ISystemState, IRootStore> = {
       })
     },
     async createPageDataAction({ dispatch }, payload: any) {
-      const { pageName, newData, url,requestInfo } = payload
+      const { pageName, newData, url, requestInfo } = payload
       await createPageData(url, newData)
       dispatch('getPageListAction', {
         isDgut: true,
@@ -80,8 +84,7 @@ const system: Module<ISystemState, IRootStore> = {
       })
     },
     async editPageDataAction({ dispatch }, playload: any) {
-      const { pageName, editData, url, requestInfo,listOtherParams } = playload
-      debugger
+      const { pageName, editData, url, requestInfo, listOtherParams } = playload
       await editPageData(url, editData)
       dispatch('getPageListAction', {
         isDgut: true,

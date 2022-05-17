@@ -9,11 +9,11 @@ export interface formItem {
   downOptions?: any
   isHidden?: boolean
   disable?: boolean
-  isMultiple?:boolean
+  isMultiple?: boolean
 }
 
 export interface IForm {
-  actionType?:string
+  actionType?: string
   modelWidth?: string
   labelWidth: string
   formItem: formItem[]

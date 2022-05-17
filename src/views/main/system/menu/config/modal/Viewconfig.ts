@@ -1,20 +1,20 @@
 import { IForm } from '@/base-ui/form'
 export const menuViewConfig: IForm = {
-  actionType:'addMenu',
+  actionType: 'addMenu',
   labelWidth: '80px',
   formItem: [
     {
       field: 'pagePath',
       type: 'input',
       label: '路径',
-      placeholder: '请输入路径如(/xxx)',
+      placeholder: '请输入路径如(/xxx)'
     },
     {
       field: 'menuName',
       type: 'input',
       label: '菜单名称',
       placeholder: '请输入菜单名称'
-    },
+    }
     // {
     //   field: 'sort',
     //   type: 'input',
@@ -31,7 +31,7 @@ export const menuViewConfig: IForm = {
   }
 }
 export const pageViewConfig: IForm = {
-  actionType:'addPage',
+  actionType: 'addPage',
   labelWidth: '80px',
   formItem: [
     {
@@ -55,14 +55,14 @@ export const pageViewConfig: IForm = {
   }
 }
 export const permissionViewConfig: IForm = {
-  actionType:'addPermission',
+  actionType: 'addPermission',
   labelWidth: '80px',
   formItem: [
     {
       field: 'menuName',
       type: 'input',
       label: '权限名字',
-      placeholder: '请输入权限名字',
+      placeholder: '请输入权限名字'
     },
     {
       field: 'permissionName',

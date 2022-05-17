@@ -2,18 +2,26 @@
   <div class="user">
     <page-search :searchFormConfig="searchFormConfig" @resetBtnClick="handleResetClick"
       @queryBtnClick="handleQueryClick" />
-    <page-content ref="pageContentRef" :contentTableConfig="contentTableConfig" pageName="user" :isDgut='true'
+    <page-content ref="pageContentRef" :contentTableConfig="contentTableConfig" pageName="user" :isDgut="true"
       :requestInfo="requestInfo" @newBtnClick="handleNewData" @editBtnClick="handleEditData"
       :allPermissionBtn="allPermissionBtn">
     </page-content>
     <page-model ref="pageModalRef" pageName="user" :modelConfig="modelFormConfigRef" :defaultInfo="defaultInfo"
-      :requestInfo="requestInfo" @confirmClick='handleConfirm'>
+      :requestInfo="requestInfo" @confirmClick="handleConfirm">
     </page-model>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, watchEffect, onMounted, reactive, toRaw } from 'vue'
+import {
+  defineComponent,
+  computed,
+  ref,
+  watchEffect,
+  onMounted,
+  reactive,
+  toRaw
+} from 'vue'
 import { searchFormConfig } from './config/search.config'
 import { contentTableConfig } from './config/content.config'
 import { modelFormConfig } from './config/model.config'
@@ -24,8 +32,13 @@ import pageModel from '@/components/page-model'
 import store, { userStore } from '@/store'
 import { usePageSearch } from '@/hooks/use-page-config'
 import { usePageModal } from '@/hooks/use-page-modal'
-import { getUserList, addUser,bindTeamById,bindRoleById } from '@/serve/DgutRequest/user/index'
+import {
+  getUserDetailById,
+  bindTeamById,
+  bindRoleById
+} from '@/serve/DgutRequest/user/index'
 import { handleWorkRequest, handleResetValue } from '@/util/handleRequest'
+import {getSelectIdByName} from '@/util/transData'
 export default defineComponent({
   name: 'users',
   components: {
@@ -34,8 +47,7 @@ export default defineComponent({
     pageModel
   },
   setup() {
-    const requestInfo =
-    {
+    const requestInfo = {
       update: '/auth/user/update',
       get: '/user/list',
       add: '/user/add',
@@ -65,84 +77,127 @@ export default defineComponent({
           })
         }) */
     const addDataFn: any = () => {
-      var obj = modelFormConfig.formItem.find(
-        (item) => item.field === 'password'
-      )
-      obj!.isHidden = false
+  for(let i of modelFormConfigRef.value.formItem) {
+        if( i.field === 'password' || i.field === 'userId') {
+            i.isHidden = false
+        }
+      }
     }
-    const editDataFn = () => {
-      var obj = modelFormConfig.formItem.find(
-        (item) => item.field === 'password' || item.field === 'userId'
-      )
-      obj!.isHidden = false
+    const getSelectNameById = (idArr: any, extIdArr: any) => {
+      let arr: any = []
+      for (let cur of extIdArr) {
+        arr.push(idArr.find((item: any) => item.value == cur).title)
+      }
+      return arr;
+    }
+
+    const editDataFn = (item: any, defaultInfo: any) => {
+      if (item && item.userId) {
+        getUserDetailById(undefined, item.userId).then(res => {
+          defaultInfo.value = { ...res.data.detail }
+          //roleIds   projectTeamIds
+          let roleNameList = getSelectNameById(modelFormConfigRef.value.formItem.find((v: any) => v.field == 'roleIds')?.options, defaultInfo.value.roleIds)
+          let projectNameList = getSelectNameById(modelFormConfigRef.value.formItem.find((v: any) => v.field == 'projectTeamIds')?.options, defaultInfo.value.projectTeamIds)
+          defaultInfo.value = { ...defaultInfo.value, roleIds: roleNameList, projectTeamIds: projectNameList }
+          console.log(defaultInfo.value);
+        })
+      }
+      debugger
+      for(let i of modelFormConfigRef.value.formItem) {
+        if( i.field === 'password' || i.field === 'userId') {
+            i.isHidden = true
+        }
+      }
       //动态请求数据 set到 defaultInfo里
-      defaultInfo
     }
+
     //2 动态添加项目组和角色列表
     const modelFormConfigRef = computed(() => {
       const store = userStore()
-        const departMentItem = modelFormConfig.formItem.find(
-         (item) => item.field === 'projectTeamIds'
-       )
-       departMentItem!.options = store.state.entriesDepartment.map((item) => ({
-         title: item.name,
-         value: item.projectTeamId
-       }))
+      const departMentItem = modelFormConfig.formItem.find(
+        (item) => item.field === 'projectTeamIds'
+      )
+      departMentItem!.options = store.state.entriesDepartment.map((item) => ({
+        title: item.name,
+        value: item.projectTeamId
+      }))
       const roleItem = modelFormConfig.formItem.find(
         (item) => item.field === 'roleIds'
       )
       roleItem!.options = store.state.entriesRole.map((item) => ({
         title: item.name,
-        value: item.roleId
+        value: item.roleId,
       }))
       return modelFormConfig
     })
 
     //3 获取公共变量和函数
     const [pageContentRef, handleResetClick, handleQueryClick] = usePageSearch()
-    const [pageModalRef, defaultInfo, handleNewData, handleEditData] =
+    let [pageModalRef, defaultInfo, handleNewData, handleEditData] =
       usePageModal(addDataFn, editDataFn)
-    const handleSelectProp=(e:any)=>{
+    const handleSelectProp = (e: any) => {
       let queryInfo: any = null
-      let downSelectObj = modelFormConfig.formItem.find(item => item.type == 'select')
+      let downSelectObj = modelFormConfig.formItem.find(
+        (item) => item.type == 'select'
+      )
       let field: any = downSelectObj?.field
       if (downSelectObj && field) {
         let eField = toRaw(e[`${field}`])
         let trueVal = null
         if (Array.isArray(eField)) {
           let arr: any = []
-          downSelectObj?.options?.forEach(item => {
+          downSelectObj?.options?.forEach((item) => {
             if (eField.indexOf(item.title) > -1) {
               arr.push(item.value)
             }
           })
-          trueVal = arr;
-        }else {
-          trueVal = downSelectObj?.options?.find(item => item.title == e![`${field}`]).value
+          trueVal = arr
+        } else {
+          trueVal = downSelectObj?.options?.find(
+            (item) => item.title == e![`${field}`]
+          ).value
         }
-          queryInfo = { ...e, [`${field}`]: trueVal }
+        queryInfo = { ...e, [`${field}`]: trueVal }
       } else {
         queryInfo = { ...e }
       }
-      console.log(queryInfo);
+      console.log(queryInfo)
       return queryInfo
     }
-    const handleConfirm = async (e: any,type:any) => {
+    const handleConfirm = async (e: any, type: any) => {
       //拿到下拉的options
-     /*  debugger
+      /*  debugger
       let queryInfo =  handleSelectProp(e)
       await handleWorkRequest(() => addUser(undefined, queryInfo), (res: any) => { console.log(res) }) */
-    //  console.log('操作基本信息后去修改其他接口',e,type);
-      switch(type) {
+      //  console.log('操作基本信息后去修改其他接口',e,type);
+      switch (type) {
         case 'edit':
-        //绑定角色
-        handleWorkRequest(() => bindTeamById(undefined, {userId:e.userId,projectTeamIds:e.projectTeamIds}), (res: any) => { console.log(res) })
-        //绑定项目组
-         handleWorkRequest(() => bindRoleById(undefined, {userId:e.userId,roleIds:e.roleIds}), (res: any) => { console.log(res) })
-        break;
+          //绑定角色
+          let  projectTeamIds =getSelectIdByName(true,modelFormConfigRef.value.formItem.find((item:any)=>item.field=='projectTeamIds')?.options ,e.projectTeamIds)
+           let  roleIds =getSelectIdByName(true,modelFormConfigRef.value.formItem.find((item:any)=>item.field=='roleIds')?.options ,e.roleIds)
+          debugger
+          handleWorkRequest(
+            () =>
+              bindTeamById(undefined, {
+                userId: e.userId,
+                projectTeamIds: projectTeamIds
+              }),
+            (res: any) => {
+              console.log(res)
+            }
+          )
+          //绑定项目组
+          handleWorkRequest(
+            () =>
+              bindRoleById(undefined, { userId: e.userId, roleIds: roleIds }),
+            (res: any) => {
+              console.log(res)
+            }
+          )
+          break
       }
     }
-    const allProjectTeams = computed(()=>{
+    const allProjectTeams = computed(() => {
       return store.state.entriesDepartment
     })
     return {
@@ -156,12 +211,11 @@ export default defineComponent({
       handleNewData,
       handleEditData,
       defaultInfo,
-      userSearch,//查询条件
+      userSearch, //查询条件
       handleConfirm, //确定添加或者修改
       allPermissionBtn,
       requestInfo,
       allProjectTeams //所有项目组
-
     }
   }
 })

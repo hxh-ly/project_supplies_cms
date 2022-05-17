@@ -1,29 +1,13 @@
 <template>
   <div class="user">
-    <page-search
-      :searchFormConfig="searchFormConfig"
-      @resetBtnClick="handleResetClick"
-      @queryBtnClick="handleQueryClick"
-      @changeQueryInfo="handleChangeQueryInfo"
-    />
-    <page-content
-      ref="pageContentRef"
-      :contentTableConfig="contentTableConfig"
-      pageName="material"
-      @newBtnClick="handleNewData"
-      @editBtnClick="handleEditData"
-      @handlePrint="handlePrint"
-      :isDgut="true"
-      :isPrint="true"
-      :requestInfo='requestInfo'
-      :allPermissionBtn="allPermissionBtn"
-    >
+    <page-search :searchFormConfig="searchFormConfig" @resetBtnClick="handleResetClick"
+      @queryBtnClick="handleQueryClick" @changeQueryInfo="handleChangeQueryInfo" />
+    <page-content ref="pageContentRef" :contentTableConfig="contentTableConfig" pageName="material"
+      @newBtnClick="handleNewData" @editBtnClick="handleEditData" @handlePrint="handlePrint" :isDgut="true"
+      :isPrint="true" :requestInfo="requestInfo" :allPermissionBtn="allPermissionBtn">
       <template #image="scope">
-        <el-image
-          style="width: 60px; height: 60px"
-          :src="scope.row.photo ? BASE_IMG_URL + scope.row.photo : ''"
-          :preview-src-list="[scope.row.photo]"
-        ></el-image>
+        <el-image style="width: 60px; height: 60px" :src="scope.row.photo ? BASE_IMG_URL + scope.row.photo : ''"
+          :preview-src-list="[scope.row.photo]"></el-image>
       </template>
       <template #unitPrice="scope">
         {{ '¥' + (scope.row.unitPrice || 0) }}
@@ -39,13 +23,8 @@
         </slot>
       </template>
     </page-content>
-    <page-model
-      ref="pageModalRef"
-      pageName="material"
-      :modelConfig="modelFormConfigRef"
-      :defaultInfo="defaultInfo"
-      @confirmClick="handleConfirmClick"
-    ></page-model>
+    <page-model ref="pageModalRef" pageName="material" :modelConfig="modelFormConfigRef" :defaultInfo="defaultInfo"
+      :requestInfo="requestInfo" @confirmClick="handleConfirmClick"></page-model>
     <page-imgprint ref="pageImgRef" class="page-print-model"></page-imgprint>
   </div>
 </template>
@@ -84,7 +63,7 @@ export default defineComponent({
     const allPermissionBtn = reactive([
       { title: 'isUpdate', name: '修改', flag: 'update' },
       { title: 'isQuery', name: '查询', flag: 'query' },
-      {title:'isPrint',name:'导出打印',flag:'print'}
+      { title: 'isPrint', name: '导出打印', flag: 'print' }
     ])
 
     let queryInfo = ref({})
@@ -107,11 +86,15 @@ export default defineComponent({
       const store = userStore()
       return modelFormConfig
     })
-
+    const editCallFn=(item:any,defaultInfo:any)=>{
+      console.log(item);
+      console.log(defaultInfo);
+    defaultInfo.value={...defaultInfo.value,type:defaultInfo.value.typeInfo}
+    }
     const [pageContentRef, handleResetClick, handleQueryClick] = usePageSearch()
 
     const [pageModalRef, defaultInfo, handleNewData, handleEditData] =
-      usePageModal()
+      usePageModal(undefined,editCallFn)
 
     //导出打印
     const pageImgRef = ref<InstanceType<typeof PageImgprint>>()
@@ -147,51 +130,65 @@ export default defineComponent({
         }
       }
     }
+    const getSelectIdByName = (idArr: any, title: any) => {
+      let res: any = null
+      res = idArr.find((item: any) => item.title == title).value;
+      return res;
+    }
 
     const handleChangeQueryInfo = (v: any) => {
       queryInfo.value = v
     }
-    const handleConfirmClick = async (v: any) => {
-      var updateInfo = {
-        ...v,
-        gmtBought: formatUtcString(v.gmtBought),
-        gmtWarehoused: formatUtcString(v.gmtWarehoused)
+    const checkNumber = (val: any) => {
+      return parseFloat(val).toString() == "NaN"
+    }
+    const handleConfirmClick = async (v: any, type: any) => {
+      if (type == 'edit') {
+        var updateInfo = {
+          ...v,
+          type: !checkNumber(v.type) ? v.type: getSelectIdByName(modelFormConfigRef.value.formItem.find((v: any) => v.field == 'type')?.options, v.type),
+          gmtBought: formatUtcString(v.gmtBought),
+          gmtWarehoused: formatUtcString(v.gmtWarehoused)
+        }
+        //debugger
+await handleWorkRequest(
+  () => dgut_updateMaterialBaseInfo(undefined, updateInfo),
+  () => {
+    updateInfo = null
+  }
+)
+  ; (pageContentRef as any).value?.getPageData()
       }
 
-      await handleWorkRequest(
-        () => dgut_updateMaterialBaseInfo(undefined, updateInfo),
-        () => {
-          updateInfo = null
-        }
-      )
-      ;(pageContentRef as any).value?.getPageData()
     }
-    const requestInfo= {
-      get:'/material/list'
-    }
-    return {
-      contentTableConfig,
-      searchFormConfig,
-      pageContentRef,
-      handleResetClick,
-      handleQueryClick,
-      handleChangeQueryInfo,
-      handleConfirmClick,
-      modelFormConfigRef,
+const requestInfo = {
+  get: '/material/list',
+  update: '',
+  add: ''
+}
+return {
+  contentTableConfig,
+  searchFormConfig,
+  pageContentRef,
+  handleResetClick,
+  handleQueryClick,
+  handleChangeQueryInfo,
+  handleConfirmClick,
+  modelFormConfigRef,
 
-      //弹窗
-      pageModalRef,
-      handleNewData,
-      handleEditData,
-      defaultInfo,
-      BASE_IMG_URL,
-      //导出打印
-      allPermissionBtn,
-      handlePrint,
-      pageImgRef,
-      queryInfo,
-      requestInfo
-    }
+  //弹窗
+  pageModalRef,
+  handleNewData,
+  handleEditData,
+  defaultInfo,
+  BASE_IMG_URL,
+  //导出打印
+  allPermissionBtn,
+  handlePrint,
+  pageImgRef,
+  queryInfo,
+  requestInfo
+}
   }
 })
 </script>

@@ -40,9 +40,7 @@ class HXHRequest {
     this.instance.interceptors.response.use((config) => {
       //console.log('全局响应拦截-loading')
       //取消loading
-      setTimeout(() => {
-        this.loading?.close()
-      }, 1000)
+      this.loading?.close()
       return config
     })
     //拦截返回的数据

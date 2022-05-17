@@ -1,5 +1,5 @@
 import HXHRequest from './request'
-import { VUE_APP_BASE_URL, TIMEOUT } from './request/config'
+import { VUE_APP_BASE_URL, TIMEOUT } from './DgutRequest/config'
 import axios from 'axios'
 import localCache from '@/util/cache'
 const materialUrl = '119.91.237.88:8082'
@@ -28,7 +28,7 @@ export const xhrequest = new HXHRequest({
 export const dgutRequest = new HXHRequest({
   // baseURL: 'http://4383d8d6-8af9-4a2a-92e6-896bfc356b38.mock.pstmn.io',
   // baseURL:'http://119.91.237.88:8082',
-  baseURL:'/dgut',
+  baseURL: VUE_APP_BASE_URL,
   timeout: TIMEOUT,
   interceptors: {
     requestInterceptor: (config: any) => {

@@ -3,10 +3,10 @@ import { IDataType } from '@/serve/type'
 const qs = require('qs')
 //✔
 const getUserList = (
-  url: string = '/user/list',
+  url = '/user/list',
   queryInfo: any = { current: 1, size: 10 }
 ) => {
-  let qsStr = qs.stringify(queryInfo)
+  const qsStr = qs.stringify(queryInfo)
   //console.log('qsStr', qsStr)
   return dgutRequest.get<IDataType>({
     url: url + `?${qsStr}`,
@@ -14,25 +14,23 @@ const getUserList = (
   })
 }
 //✔
-const addUser = (url: string = '/user/add', queryInfo: any = {}) => {
+const addUser = (url = '/user/add', queryInfo: any = {}) => {
   return dgutRequest.post<IDataType>({
     url: url,
     data: { ...queryInfo },
     isShowLoading: true
   })
 }
-const getTeamById=(url: string = '/user/add', queryInfo: any = {})=>{
-  return dgutRequest.post<IDataType>({
-    url: url,
-    data: { ...queryInfo },
+const getUserDetailById = (url = 'user/get/',id:any) => {
+
+  return dgutRequest.get<IDataType>({
+    url: url+id,
     isShowLoading: true
   })
 }
-const getRoleById=(url: string = '/user/add', queryInfo: any = {})=>{
 
-}
 
-const bindTeamById=(url:string ='/projectTeam/user/bind',queryInfo:any={})=>{
+const bindTeamById = (url = '/projectTeam/user/bind', queryInfo: any = {}) => {
   return dgutRequest.post<IDataType>({
     url: url,
     data: { ...queryInfo },
@@ -40,7 +38,7 @@ const bindTeamById=(url:string ='/projectTeam/user/bind',queryInfo:any={})=>{
   })
 }
 
-const bindRoleById=(url:string ='/auth/role/bind',queryInfo:any={})=>{
+const bindRoleById = (url = '/auth/role/bind', queryInfo: any = {}) => {
   return dgutRequest.post<IDataType>({
     url: url,
     data: { ...queryInfo },
@@ -48,4 +46,10 @@ const bindRoleById=(url:string ='/auth/role/bind',queryInfo:any={})=>{
   })
 }
 
-export { getUserList, addUser,getRoleById,getTeamById,bindTeamById,bindRoleById }
+export {
+  getUserList,
+  addUser,
+  getUserDetailById,
+  bindTeamById,
+  bindRoleById
+}

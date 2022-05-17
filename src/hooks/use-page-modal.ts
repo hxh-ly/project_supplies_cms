@@ -1,14 +1,12 @@
 import { ref } from 'vue'
 import pageModel from '@/components/page-model'
-type CallbackFn = (item?: any) => void
+type CallbackFn = (item?: any,data?:any) => void
 export const usePageModal = (addFnCb?: CallbackFn, editFnCb?: CallbackFn) => {
   //ref
   const pageModalRef = ref<InstanceType<typeof pageModel>>()
-  const defaultInfo = ref({})
+  let defaultInfo = ref({})
   //
-  const handleNewData = (type:any,item:any) => {
-    console.log('asdasdas---type',type);
-
+  const handleNewData = (type: any, item: any) => {
     defaultInfo.value = {}
     if (pageModalRef.value) {
       pageModalRef.value.dialogVisible = true
@@ -17,8 +15,8 @@ export const usePageModal = (addFnCb?: CallbackFn, editFnCb?: CallbackFn) => {
   }
   const handleEditData = async (item: any) => {
     defaultInfo.value = { ...item }
-    console.log('点击编辑的默认数据来源 defaultInfo.value', defaultInfo.value)
-
+    //console.log('点击编辑的默认数据来源 defaultInfo.value', defaultInfo.value)
+    
     if (pageModalRef.value) {
       // pageModalRef.value.totalInfoItem = { ...item }
       pageModalRef.value.dialogVisible = true
@@ -27,10 +25,7 @@ export const usePageModal = (addFnCb?: CallbackFn, editFnCb?: CallbackFn) => {
       pageModalRef.value.createTableList(item)
       /*    pageModalRef.value.innerTable.value = await editFnCb(item)
       console.log('进edit了嘛',pageModalRef.value.innerTable); */
-    } else editFnCb && editFnCb(item)
-  }
-  const handleDeleteData = async(id:any) => {
-
+    } else editFnCb && editFnCb(item,defaultInfo)
   }
   return [pageModalRef, defaultInfo, handleNewData, handleEditData]
 }

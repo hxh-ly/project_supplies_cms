@@ -1,13 +1,34 @@
 <template>
   <div class="user">
-    <page-content :contentTableConfig="contentTableConfig" :isDgut='true' :requestInfo="requestInfo" pageName="role"
-      @newBtnClick="handleNewData" @editBtnClick="handleEditData" :allPermissionBtn='allPermissionBtn'></page-content>
-    <page-model ref="pageModalRef" pageName="role" :modelConfig="modelFormConfig" :defaultInfo="defaultInfo"
-      :requestInfo="requestInfo" :other-info="otherInfo" @confirmClick='handleConfirm'>
+    <page-content
+      :contentTableConfig="contentTableConfig"
+      :isDgut="true"
+      :requestInfo="requestInfo"
+      pageName="role"
+      @newBtnClick="handleNewData"
+      @editBtnClick="handleEditData"
+      :allPermissionBtn="allPermissionBtn"
+    ></page-content>
+    <page-model
+      ref="pageModalRef"
+      pageName="role"
+      :modelConfig="modelFormConfig"
+      :defaultInfo="defaultInfo"
+      :requestInfo="requestInfo"
+      :other-info="otherInfo"
+      @confirmClick="handleConfirm"
+    >
       <template #default>
         <div class="tree-panel">
-          <el-tree ref="elTreeRef" :data="menu" show-checkbox node-key="id" :default-checked-keys="defaultKey"
-            :props="{ children: 'children', label: 'label' }" @check="handleCheckChange" />
+          <el-tree
+            ref="elTreeRef"
+            :data="menu"
+            show-checkbox
+            node-key="id"
+            :default-checked-keys="defaultKey"
+            :props="{ children: 'children', label: 'label' }"
+            @check="handleCheckChange"
+          />
         </div>
       </template>
     </page-model>
@@ -15,7 +36,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, reactive, nextTick, onMounted, watch } from 'vue'
+import {
+  defineComponent,
+  computed,
+  ref,
+  reactive,
+  nextTick,
+  onMounted,
+  watch
+} from 'vue'
 import { userStore } from '@/store'
 import { searchFormConfig } from './config/search.config'
 import { contentTableConfig } from './config/content.config'
@@ -32,7 +61,10 @@ import { ElTree } from 'element-plus'
 import { addRole } from '@/serve/DgutRequest/role/index'
 import { handleWorkRequest } from '@/util/handleRequest'
 import { getPageListData } from '@/serve/main/system/system'
-import { getAuthMenuList, updateRolePermissions } from '@/serve/DgutRequest/menu/index'
+import {
+  getAuthMenuList,
+  updateRolePermissions
+} from '@/serve/DgutRequest/menu/index'
 export default defineComponent({
   name: 'users',
   components: {
@@ -53,8 +85,8 @@ export default defineComponent({
       { title: 'isUpdate', name: '修改', flag: 'update' },
       { title: 'isQuery', name: '查询', flag: 'query' }
     ])
-    let menu: any = ref({});
-    let defaultKey: any = ref([]);
+    let menu: any = ref({})
+    let defaultKey: any = ref([])
     let checkKeys: any = ref(null)
     const store = userStore()
     let otherInfo = ref({})
@@ -76,8 +108,8 @@ export default defineComponent({
         paginated: false,
         treed: true,
         roleId: item.roleId
-      }).then(res => {
-        console.log('点击再去请求', res);
+      }).then((res) => {
+        console.log('点击再去请求', res)
         const { tree, rolePermissions } = res.data
         defaultKey.value = [...rolePermissions]
         menu.value = tree
@@ -96,19 +128,24 @@ export default defineComponent({
       defaultKey.value = []
     }
     const [pageContentRef, handleResetClick, handleQueryClick] = usePageSearch()
-    const [pageModalRef, defaultInfo, handleNewData, handleEditData] = usePageModal(addCallback, editCallback)
+    const [pageModalRef, defaultInfo, handleNewData, handleEditData] =
+      usePageModal(addCallback, editCallback)
     const handleConfirm = async (e: any, type: any) => {
-
       if (type == 'edit') {
-        let { roleId } = e;
+        let { roleId } = e
         let queryInfo = { roleId, permissionIds: [...checkKeys.value] }
-        await handleWorkRequest(() => updateRolePermissions(undefined, queryInfo), (res: any) => { console.log(res) })
+        await handleWorkRequest(
+          () => updateRolePermissions(undefined, queryInfo),
+          (res: any) => {
+            console.log(res)
+          }
+        )
         //await handleWorkRequest(() => addRole(undefined, queryInfo), (res: any) => { console.log(res) })
       } else if (type == 'add') {
         //await handleWorkRequest(() => addRole(undefined, queryInfo), (res: any) => { console.log(res) })
         //添加的东西是啥？
         let newData = { ...e }
-        console.log(newData);
+        console.log(newData)
 
         /*  store.dispatch('system/createPageDataAction', {
            urlPre: 'auth',
@@ -116,7 +153,6 @@ export default defineComponent({
            pageName: "role",
          }) */
       }
-
     }
     const handleCheckChange = (data1: any, data2: any) => {
       const checkedKeys = data2.checkedKeys
@@ -125,15 +161,12 @@ export default defineComponent({
       checkKeys.value = menuList
       otherInfo.value = { permissionIds: menuList }
     }
-    onMounted(() => {
-    })
     /*  const handleCheckChange = (data1: any, data2: any) => {
       const checkedKeys = data2.checkedKeys
       const halfCheckedKeys = data2.halfCheckedKeys
       const menuList = [...checkedKeys, ...halfCheckedKeys]
       otherInfo.value = { menuList }
     } */
-
 
     return {
       searchFormConfig,
@@ -148,9 +181,9 @@ export default defineComponent({
       defaultInfo,
       handleNewData,
       handleEditData,
-      menu,//所有的权限&菜单
-      defaultKey,//已经选中的
-      checkKeys,//正在编辑的树状权限
+      menu, //所有的权限&菜单
+      defaultKey, //已经选中的
+      checkKeys, //正在编辑的树状权限
       handleCheckChange,
       handleConfirm, //添加或编辑的确认
       otherInfo, //需要合并formData的树的数组
@@ -162,5 +195,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -3,8 +3,8 @@ export const contentTableConfig = {
   propList: [
     { prop: 'roleId', label: '角色id', minWidth: '100' },
     { prop: 'name', label: '角色名', minWidth: '100' },
-    {prop:'description',label:'角色描述',minWidth:'160'},
-   /*  {
+    { prop: 'description', label: '角色描述', minWidth: '160' },
+    /*  {
       prop: 'createAt',
       label: '创建时间',
       minWidth: '250',

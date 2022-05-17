@@ -2,6 +2,7 @@ import { Module } from 'vuex'
 import { IRootStore } from '../type'
 import { ILoginState } from './type'
 import router from '@/router'
+import {handleWorkRequest} from '@/util/handleRequest'
 import { mapMenuToRoutes, mapMenusToPermissions } from '@/util/map-menu'
 import {
   accountLoginRequest,
@@ -9,6 +10,7 @@ import {
 } from '@/serve/DgutRequest/login/login'
 import { IAccount } from '@/serve/DgutRequest/login/type'
 import localCache from '@/util/cache'
+import { ElMessage } from 'element-plus'
 const login: Module<ILoginState, IRootStore> = {
   namespaced: true,
   state: () => {
@@ -22,10 +24,18 @@ const login: Module<ILoginState, IRootStore> = {
   actions: {
     async accountLoginAction({ commit, dispatch }, playload: IAccount) {
       //1
+      const loginData:any = await accountLoginRequest(playload)
 
-      const loginData = await accountLoginRequest(playload)
       const { id, name, token } = loginData.data
       //...用户信息
+      if(!loginData.data.success) {
+        ElMessage({
+          message: loginData.data?.info ||  loginData.data?.message,
+          icon: 'error',
+          duration: 500
+        })
+        return
+      }
       const userInfo = { name, id }
       commit('changeUserInfo', userInfo)
       commit('changeToken', token)
@@ -45,12 +55,21 @@ const login: Module<ILoginState, IRootStore> = {
 
       localCache.setItem('userMenus', userMenus)
       commit('changeUserMenus', userMenus)
-
-      //4 请求
-
-      //console.log('从登录页进来才会执行，接着跳到main');
-      //4 跳到首页
       router.push('/main')
+    },
+    async flashMenu({ commit, dispatch }, playload: IAccount) {
+      console.log('在system调用login吗');
+
+      const UserInfoMenuRes = await requestUserMenusRole()
+      const userMenus = UserInfoMenuRes.data
+      console.log(
+        '%c process--- accountLoginAction',
+        'background:#aaa;color:#bada55',
+        userMenus
+      )
+
+      localCache.setItem('userMenus', userMenus)
+      commit('changeUserMenus', userMenus)
     },
     phoneLoginAction({ commit }, playload: any) {
       //console.log('执行phoneLoginAction', playload)

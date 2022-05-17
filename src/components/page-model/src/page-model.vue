@@ -29,7 +29,16 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, nextTick, getCurrentInstance, onMounted, toRaw } from 'vue'
+import {
+  defineComponent,
+  reactive,
+  ref,
+  watch,
+  nextTick,
+  getCurrentInstance,
+  onMounted,
+  toRaw
+} from 'vue'
 import XhForm from '@/base-ui/form'
 import XhTable from '@/base-ui/table'
 import { userStore } from '@/store'
@@ -75,8 +84,9 @@ export default defineComponent({
     requestInfo: {
       type: Object
     },
-    listOtherParams:{
-      type:Object
+    listOtherParams: {
+      type: Object,
+      default: () => ({})
     }
   },
   components: {
@@ -84,7 +94,6 @@ export default defineComponent({
     XhTable
   },
   setup(props, { emit }) {
-
     let that = getCurrentInstance()
     let innerTable: any = ref([])
     let count = ref(0)
@@ -102,7 +111,7 @@ export default defineComponent({
     const formData = ref<any>({})
     const store = userStore()
     const handleSelectProp = (e: any) => {
-      let queryInfo: any = {...e}
+      let queryInfo: any = { ...e }
       for (let i = 0; i < props.modelConfig!.formItem.length; i++) {
         let downSelectObj = props.modelConfig!.formItem[i]
         //如果是下拉
@@ -119,15 +128,17 @@ export default defineComponent({
                   arr.push(item.value)
                 }
               })
-              trueVal = arr;
+              trueVal = arr
             }
             // 如果是单选
             else {
-              trueVal = downSelectObj?.options?.find((item: any) => item.title == e![`${field}`]).value
+              trueVal = downSelectObj?.options?.find(
+                (item: any) => item.title == e![`${field}`]
+              ).value
             }
             queryInfo = { ...queryInfo, [`${field}`]: trueVal }
           }
-          console.log(queryInfo);
+          console.log(queryInfo)
         }
       }
 
@@ -156,7 +167,7 @@ export default defineComponent({
     watch(
       () => props.defaultInfo,
       (newVal: any) => {
-        console.log('defaultInfo', newVal);
+        console.log('defaultInfo', newVal)
         for (const item of props.modelConfig?.formItem) {
           formData.value[`${item.field}`] = newVal[`${item.field}`]
           //可能是来自搜素 而不是 修改
@@ -165,27 +176,28 @@ export default defineComponent({
         if ('password' in formData.value && !formData.value['password']) {
           formData.value['password'] = ''
         }
-        console.log(formData.value);
-
+        console.log(formData.value)
       }
     )
-    onMounted(() => {
-
-    })
     const confirmClick = () => {
       if (Object.keys(props.defaultInfo).length) {
-        //编辑debugger
-        if (isModified) {
+        if (isModified && props.requestInfo!.update) {
           store.dispatch('system/editPageDataAction', {
             url: props.requestInfo!.update,
             requestInfo: props.requestInfo,
             pageName: props.pageName,
-            editData: { ...props.defaultInfo, ...formData.value},
-            listOtherParams:{... props.listOtherParams}
+            editData: { ...props.defaultInfo, ...formData.value },
+            listOtherParams: { ...props.listOtherParams }
           })
-          //编辑后还要去操作其他接口的
-          emit('confirmClick', { ...props.defaultInfo, ...formData.value }, 'edit')
         }
+        //编辑后还要去操作其他接口的
+        //debugger
+        emit(
+          'confirmClick',
+          { ...props.defaultInfo, ...formData.value },
+          'edit'
+        )
+
       } else {
         if (props.requestInfo?.add) {
           let queryInfo = handleSelectProp(formData.value)
@@ -194,10 +206,19 @@ export default defineComponent({
             url: props.requestInfo!.add,
             requestInfo: props.requestInfo,
             pageName: props.pageName,
-            newData: { ...props.defaultInfo, ...queryInfo, ...props.otherInfo,... props.listOtherParams }
+            newData: {
+              ...props.defaultInfo,
+              ...queryInfo,
+              ...props.otherInfo,
+              ...props.listOtherParams
+            }
           })
         }
-        emit('confirmClick', { ...props.defaultInfo, ...formData.value }, props.modelConfig?.actionType || 'add')
+        emit(
+          'confirmClick',
+          { ...props.defaultInfo, ...formData.value },
+          props.modelConfig?.actionType || 'add'
+        )
       }
 
       dialogVisible.value = false
@@ -213,7 +234,7 @@ export default defineComponent({
       handleInClick,
       isBorrow,
       isReturn,
-      isModified,
+      isModified
     }
   }
 })

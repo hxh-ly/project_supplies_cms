@@ -10,8 +10,8 @@ interface ISystemState {
   materialList: any[]
   materialCount: number
   borrowInfoList: any[]
-  borrowInfoCount: number,
-  permissionList:any[],
-  permissionCount:number
+  borrowInfoCount: number
+  permissionList: any[]
+  permissionCount: number
 }
 export { ISystemState }

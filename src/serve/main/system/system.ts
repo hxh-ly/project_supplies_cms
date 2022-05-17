@@ -2,7 +2,7 @@ import { xhrequest, dgutRequest } from '@/serve'
 import { IDataType } from '@/serve/type'
 import qs from 'qs'
 export function getPageListData(url: string, queryInfo: any): any {
-  let strQuery = qs.stringify(queryInfo)
+  const strQuery = qs.stringify(queryInfo)
   return dgutRequest.get<IDataType>({
     url: url + `?${strQuery}`,
     isShowLoading: false

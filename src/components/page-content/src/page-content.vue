@@ -4,13 +4,18 @@
     <xh-table :listData="userList" :listCount="userCount" v-bind="contentTableConfig" v-model:page="pageInfo"
       @emitSelectionChange="emitSelectionChange">
       <template #headerHandler>
-        <el-button v-if="checkIsShow('isAdd')!=null" type="primary" size="default" @click="handleNewClick">{{ checkIsShow('isAdd').name }}
+        <el-button v-if="checkIsShow('isAdd') != null" type="primary" size="default" @click="handleNewClick">{{
+            checkIsShow('isAdd').name
+        }}
         </el-button>
-        <el-button v-if="checkIsShow('isAddMenu')!=null" type="primary" size="default" @click="handleNewClick('add_menu')">{{ checkIsShow('isAddMenu').name }}
+        <el-button v-if="checkIsShow('isAddMenu') != null" type="primary" size="default"
+          @click="handleNewClick('add_menu')">{{ checkIsShow('isAddMenu').name }}
         </el-button>
       </template>
       <template #rightPrint>
-        <el-button v-if="checkIsShow('isPrint')!=null" type="primary" size="default" @click="handleToPrint">{{ checkIsShow('isPrint').name }}</el-button>
+        <el-button v-if="checkIsShow('isPrint') != null" type="primary" size="default" @click="handleToPrint">{{
+            checkIsShow('isPrint').name
+        }}</el-button>
       </template>
       <!-- id  -->
       <!-- 选中 -->
@@ -35,15 +40,20 @@
         <div class="handle-btn">
           <el-button v-if="checkIsShow('isDelete')" @click="handleDelClick(scope.row)" icon="el-icon-remove"
             type="text">删除</el-button>
-          <el-button v-if="checkIsShow('isUpdate')" @click="handleEditClick({...scope.row})" icon="el-icon-edit" type="text">
+          <el-button v-if="checkIsShow('isUpdate')" @click="handleEditClick({ ...scope.row })" icon="el-icon-edit"
+            type="text">
             编辑</el-button>
           <el-button v-if="!checkIsShow('isUpdate')" @click="handleEditClick(scope.row)" icon="el-icon-edit"
             type="text">详情</el-button>
-            <!-- 自定义权限的添加 -->
-          <el-button v-if="checkIsShow('isAddPage')&&scope.row.level == 1" @click="handleNewClick('add_page',scope.row)" icon="el-icon-remove"
-            type="text">{{checkIsShow('isAddPage').name}}</el-button>
-             <el-button v-if="checkIsShow('isAddPre')&&scope.row.level == 2" @click="handleNewClick('add_permission',scope.row)" icon="el-icon-remove"
-            type="text">{{checkIsShow('isAddPre').name}}</el-button>
+          <!-- 自定义权限的添加 -->
+          <el-button v-if="checkIsShow('isAddPage') && scope.row.level == 1"
+            @click="handleNewClick('add_page', scope.row)" icon="el-icon-remove" type="text">{{
+                checkIsShow('isAddPage').name
+            }}</el-button>
+          <el-button v-if="checkIsShow('isAddPre') && scope.row.level == 2"
+            @click="handleNewClick('add_permission', scope.row)" icon="el-icon-remove" type="text">{{
+                checkIsShow('isAddPre').name
+            }}</el-button>
           <el-button v-if="scope.row.borrowState == 0" @click="handleCancelClick(scope.row)" icon="el-icon-edit"
             type="text">取消申请</el-button>
         </div>
@@ -73,6 +83,7 @@ import XhTable from '@/base-ui/table'
 import { userStore } from '@/store'
 import { usePermission } from '@/hooks/use-permission'
 import { request } from 'http'
+import { ElMessageBox } from 'element-plus'
 const path = require('path')
 export default defineComponent({
   props: {
@@ -108,13 +119,16 @@ export default defineComponent({
     }
   },
   components: {
-    XhTable
+    XhTable,
+    ElMessageBox
   },
   emits: ['newBtnClick', 'editBtnClick', 'handlePrint', 'cancelBtnClick'],
   setup(props, { emit }) {
     const store = userStore()
     //1 双向绑定pageInfo  当前页，当前条数
     const pageInfo = ref({ currentPage: 1, pageSize: 10 })
+
+
 
     let queryInfo: any = inject('queryInfo')
 
@@ -130,10 +144,14 @@ export default defineComponent({
           isDgut: true,
           pageName: props.pageName,
           url: props!.requestInfo?.get,
-          queryInfo: Object.assign({
-            size: pageInfo.value.pageSize,
-            current: pageInfo.value.currentPage,
-          }, queryInfo, props.listOtherParams)
+          queryInfo: Object.assign(
+            {
+              size: pageInfo.value.pageSize,
+              current: pageInfo.value.currentPage
+            },
+            queryInfo,
+            props.listOtherParams
+          )
         })
       }
     }
@@ -143,7 +161,7 @@ export default defineComponent({
       })
     }
     const allBtnShowLists = ref(getAllPermissionBtn(props.allPermissionBtn))
-    const checkIsShow = (name:any,arr: any = allBtnShowLists.value) => {
+    const checkIsShow = (name: any, arr: any = allBtnShowLists.value) => {
       return arr.find((item: any) => name == item.title)
     }
     getPageData()
@@ -168,19 +186,25 @@ export default defineComponent({
     // console.log('动态字段otherPropSlots', otherPropSlots)
     // 5 删除 | 创建 |更新
     const handleDelClick = (item: any) => {
-      console.log(item)
-      let id = item[`${props.pageName}Id`]
-      if(props.requestInfo?.delete) {
-      store.dispatch('system/deletePageData', {
-        url:path.resolve(props.requestInfo?.delete,id),
-        pageName: props.pageName,
-        requestInfo:props.requestInfo,
-        listOtherParams:props.listOtherParams
-      })
-      }
+      ElMessageBox.confirm('确定删除吗')
+        .then(() => {
+          console.log(item)
+          let id = item[`${props.pageName}Id`]
+          if (props.requestInfo?.delete) {
+            store.dispatch('system/deletePageData', {
+              url: path.resolve(props.requestInfo?.delete, id),
+              pageName: props.pageName,
+              requestInfo: props.requestInfo,
+              listOtherParams: props.listOtherParams
+            })
+          }
+        })
+        .catch((err:any) => {
+            console.log(err);
+        })
     }
-    const handleNewClick = (type:any,item:any) => {
-      emit('newBtnClick',type,item)
+    const handleNewClick = (type: any, item: any) => {
+      emit('newBtnClick', type, item)
     }
     const handleEditClick = (item: any) => {
       emit('editBtnClick', item)

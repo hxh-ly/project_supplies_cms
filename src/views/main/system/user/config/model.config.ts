@@ -12,7 +12,7 @@ export const modelFormConfig: IForm = {
       field: 'userId',
       type: 'input',
       label: '账号',
-      placeholder: '请输入账号',
+      placeholder: '请输入账号'
       // disable:true,
     },
     {
@@ -20,7 +20,6 @@ export const modelFormConfig: IForm = {
       type: 'input',
       label: '用户密码',
       placeholder: '请输入密码',
-      isHidden: false
     },
     {
       field: 'telNumber',
@@ -33,7 +32,7 @@ export const modelFormConfig: IForm = {
       type: 'select',
       label: '选择角色',
       placeholder: '请选择角色',
-      isMultiple:true,
+      isMultiple: true,
       options: []
     },
     {
@@ -41,9 +40,9 @@ export const modelFormConfig: IForm = {
       type: 'select',
       label: '项目组',
       placeholder: '请选择项目组',
-      isMultiple:true,
+      isMultiple: true,
       options: []
-    },
+    }
   ],
   rules: {
     account: [
@@ -60,7 +59,7 @@ export const modelFormConfig: IForm = {
         message: '请输入账号(学号)',
         trigger: 'blur'
       },
-      { min: 6, max: 20, message: '长度需在6~20之间', trigger: 'blur' },
+      { min: 6, max: 20, message: '长度需在6~20之间', trigger: 'blur' }
     ],
     password: [
       {
@@ -75,8 +74,8 @@ export const modelFormConfig: IForm = {
         message: '请选择角色',
         trigger: 'blur'
       }
-    ],
-/*     unitPrice: [
+    ]
+    /*     unitPrice: [
       {
         required: true,
         type: 'string',

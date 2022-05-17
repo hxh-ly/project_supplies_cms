@@ -49,7 +49,7 @@
                   style="width: 100%"
                   :prop="item.field"
                   :disabled="item.disable"
-                   :multiple="item.isMultiple"
+                  :multiple="item.isMultiple"
                 >
                   <el-option
                     v-for="option in item.options"
@@ -150,7 +150,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref, watch, reactive,onMounted } from 'vue'
+import { defineComponent, PropType, ref, watch, reactive, onMounted } from 'vue'
 import { formItem } from '../type'
 import type FormInstance from 'element-plus'
 import { ElForm, ElMessage, ElUpload } from 'element-plus'
@@ -204,8 +204,8 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'resetFormConfigRef', 'delSelect'],
   setup(props, { emit }) {
-    onMounted(()=>{
-      console.log('.....');
+    onMounted(() => {
+      console.log('.....')
     })
     // 外层的formData【key】=''  这样改能影响到引用
     /*     let formData = ref({ ...props.modelValue })

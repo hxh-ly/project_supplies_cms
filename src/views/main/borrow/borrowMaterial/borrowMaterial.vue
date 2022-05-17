@@ -1,24 +1,43 @@
 <template>
   <div class="user">
-    <page-search :searchFormConfig="searchFormConfigRef" @resetBtnClick="handleResetClick"
-      @queryBtnClick="handleQueryClick" @changeQueryInfo="handleChangeQueryInfo" />
-    <page-content ref="pageContentRef" :contentTableConfig="contentTableConfig" pageName="borrowInfo"
-      @newBtnClick="handleNewData" @editBtnClick="handleEditData" @cancelBtnClick="handleSwitchState" :isDgut="true"
-      :requestInfo="requestInfo">
+    <page-search
+      :searchFormConfig="searchFormConfigRef"
+      @resetBtnClick="handleResetClick"
+      @queryBtnClick="handleQueryClick"
+      @changeQueryInfo="handleChangeQueryInfo"
+    />
+    <page-content
+      ref="pageContentRef"
+      :contentTableConfig="contentTableConfig"
+      pageName="borrowInfo"
+      @newBtnClick="handleNewData"
+      @editBtnClick="handleEditData"
+      @cancelBtnClick="handleSwitchState"
+      :isDgut="true"
+      :requestInfo="requestInfo"
+    >
       <template #gmtStart="scope">{{
-          $filters.formatTime(scope.row.gmtStart)
+        $filters.formatTime(scope.row.gmtStart)
       }}</template>
       <template #gmtEnd="scope">{{
-          $filters.formatTime(scope.row.gmtEnd)
+        $filters.formatTime(scope.row.gmtEnd)
       }}</template>
       <template #userInfo="scope">
         {{ scope.row.userInfo?.account || 0 }}
       </template>
       <template #userId="scope">{{ scope.row.userId || 0 }}</template>
     </page-content>
-    <page-model ref="pageModalRef" fnType="edit" pageName="borrowInfo" :modelConfig="modelFormConfigRef"
-      @materialsInStore="handleInStore" @materialsOutStore="handleOutStore" :defaultInfo="defaultInfo" :hasTable="true"
-      :requestInfo="requestInfo">
+    <page-model
+      ref="pageModalRef"
+      fnType="edit"
+      pageName="borrowInfo"
+      :modelConfig="modelFormConfigRef"
+      @materialsInStore="handleInStore"
+      @materialsOutStore="handleOutStore"
+      :defaultInfo="defaultInfo"
+      :hasTable="true"
+      :requestInfo="requestInfo"
+    >
       <template #tableList>
         <!--  <xh-table
           :listData="materialsInfo"
@@ -123,7 +142,7 @@ export default defineComponent({
       handleWorkRequest(
         () => dgut_materialReturn(undefined, item),
         () => {
-          ; (pageModalRef as any).value.dialogVisible = false
+          ;(pageModalRef as any).value.dialogVisible = false
         }
       )
     }
@@ -132,7 +151,7 @@ export default defineComponent({
       handleWorkRequest(
         () => dgut_materialBorrow(undefined, item),
         () => {
-          ; (pageModalRef as any).value.dialogVisible = false
+          ;(pageModalRef as any).value.dialogVisible = false
         }
       )
     }
