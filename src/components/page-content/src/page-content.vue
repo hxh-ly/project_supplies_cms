@@ -1,28 +1,47 @@
 <!--  -->
 <template>
   <div class="page-content">
-    <xh-table :listData="userList" :listCount="userCount" v-bind="contentTableConfig" v-model:page="pageInfo"
-      @emitSelectionChange="emitSelectionChange">
+    <xh-table
+      :listData="userList"
+      :listCount="userCount"
+      v-bind="contentTableConfig"
+      v-model:page="pageInfo"
+      @emitSelectionChange="emitSelectionChange"
+    >
       <template #headerHandler>
-        <el-button v-if="checkIsShow('isAdd') != null" type="primary" size="default" @click="handleNewClick">{{
-            checkIsShow('isAdd').name
-        }}
+        <el-button
+          v-if="checkIsShow('isAdd') != null"
+          type="primary"
+          size="default"
+          @click="handleNewClick"
+          >{{ checkIsShow('isAdd').name }}
         </el-button>
-        <el-button v-if="checkIsShow('isAddMenu') != null" type="primary" size="default"
-          @click="handleNewClick('add_menu')">{{ checkIsShow('isAddMenu').name }}
+        <el-button
+          v-if="checkIsShow('isAddMenu') != null"
+          type="primary"
+          size="default"
+          @click="handleNewClick('add_menu')"
+          >{{ checkIsShow('isAddMenu').name }}
         </el-button>
       </template>
       <template #rightPrint>
-        <el-button v-if="checkIsShow('isPrint') != null" type="primary" size="default" @click="handleToPrint">{{
-            checkIsShow('isPrint').name
-        }}</el-button>
+        <el-button
+          v-if="checkIsShow('isPrint') != null"
+          type="primary"
+          size="default"
+          @click="handleToPrint"
+          >{{ checkIsShow('isPrint').name }}</el-button
+        >
       </template>
       <!-- id  -->
       <!-- 选中 -->
       <!-- 操作 -->
       <template #status="scope">
         <slot>
-          <el-button size="mini" :type="scope.row.enable ? 'success' : 'primary'">{{ scope.row.enable ? '启用' : '禁用' }}
+          <el-button
+            size="mini"
+            :type="scope.row.enable ? 'success' : 'primary'"
+            >{{ scope.row.enable ? '启用' : '禁用' }}
           </el-button>
         </slot>
       </template>
@@ -38,28 +57,58 @@
       </template>
       <template #handle="scope">
         <div class="handle-btn">
-          <el-button v-if="checkIsShow('isDelete')" @click="handleDelClick(scope.row)" icon="el-icon-remove"
-            type="text">删除</el-button>
-          <el-button v-if="checkIsShow('isUpdate')" @click="handleEditClick({ ...scope.row })" icon="el-icon-edit"
-            type="text">
-            编辑</el-button>
-          <el-button v-if="!checkIsShow('isUpdate')" @click="handleEditClick(scope.row)" icon="el-icon-edit"
-            type="text">详情</el-button>
+          <el-button
+            v-if="checkIsShow('isDelete')"
+            @click="handleDelClick(scope.row)"
+            icon="el-icon-remove"
+            type="text"
+            >删除</el-button
+          >
+          <el-button
+            v-if="checkIsShow('isUpdate')"
+            @click="handleEditClick({ ...scope.row })"
+            icon="el-icon-edit"
+            type="text"
+          >
+            编辑</el-button
+          >
+          <el-button
+            v-if="!checkIsShow('isUpdate')"
+            @click="handleEditClick(scope.row)"
+            icon="el-icon-edit"
+            type="text"
+            >详情</el-button
+          >
           <!-- 自定义权限的添加 -->
-          <el-button v-if="checkIsShow('isAddPage') && scope.row.level == 1"
-            @click="handleNewClick('add_page', scope.row)" icon="el-icon-remove" type="text">{{
-                checkIsShow('isAddPage').name
-            }}</el-button>
-          <el-button v-if="checkIsShow('isAddPre') && scope.row.level == 2"
-            @click="handleNewClick('add_permission', scope.row)" icon="el-icon-remove" type="text">{{
-                checkIsShow('isAddPre').name
-            }}</el-button>
-          <el-button v-if="scope.row.borrowState == 0" @click="handleCancelClick(scope.row)" icon="el-icon-edit"
-            type="text">取消申请</el-button>
+          <el-button
+            v-if="checkIsShow('isAddPage') && scope.row.level == 1"
+            @click="handleNewClick('add_page', scope.row)"
+            icon="el-icon-remove"
+            type="text"
+            >{{ checkIsShow('isAddPage').name }}</el-button
+          >
+          <el-button
+            v-if="checkIsShow('isAddPre') && scope.row.level == 2"
+            @click="handleNewClick('add_permission', scope.row)"
+            icon="el-icon-remove"
+            type="text"
+            >{{ checkIsShow('isAddPre').name }}</el-button
+          >
+          <el-button
+            v-if="scope.row.borrowState == 0"
+            @click="handleCancelClick(scope.row)"
+            icon="el-icon-edit"
+            type="text"
+            >取消申请</el-button
+          >
         </div>
       </template>
       <!-- 这部分的动态配置出来的 -->
-      <template v-for="item in otherPropSlots" :key="item.prop" #[item.slotName]="scope">
+      <template
+        v-for="item in otherPropSlots"
+        :key="item.prop"
+        #[item.slotName]="scope"
+      >
         <template v-if="item.slotName">
           <slot :name="item.slotName" :row="scope.row"></slot>
         </template>
@@ -128,14 +177,13 @@ export default defineComponent({
     //1 双向绑定pageInfo  当前页，当前条数
     const pageInfo = ref({ currentPage: 1, pageSize: 10 })
 
-
-
     let queryInfo: any = inject('queryInfo')
 
     watch(pageInfo, (newVal) => {
+      //debugger
       //console.log('换页', {...queryInfo.value})
       //获取 inject的参数
-      getPageData({ ...queryInfo.value })
+      getPageData({ ...newVal })
     })
     //2 发送网络请求
     const getPageData = (queryInfo: any = {}) => {
@@ -147,7 +195,8 @@ export default defineComponent({
           queryInfo: Object.assign(
             {
               size: pageInfo.value.pageSize,
-              current: pageInfo.value.currentPage
+              current: pageInfo.value.currentPage,
+              paginated:true
             },
             queryInfo,
             props.listOtherParams
@@ -199,8 +248,8 @@ export default defineComponent({
             })
           }
         })
-        .catch((err:any) => {
-            console.log(err);
+        .catch((err: any) => {
+          console.log(err)
         })
     }
     const handleNewClick = (type: any, item: any) => {
@@ -244,5 +293,4 @@ export default defineComponent({
   }
 })
 </script>
-<style scoped lang="less">
-</style>
+<style scoped lang="less"></style>

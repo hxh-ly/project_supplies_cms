@@ -21,14 +21,12 @@ const addUser = (url = '/user/add', queryInfo: any = {}) => {
     isShowLoading: true
   })
 }
-const getUserDetailById = (url = 'user/get/',id:any) => {
-
+const getUserDetailById = (url = 'user/get/', id: any) => {
   return dgutRequest.get<IDataType>({
-    url: url+id,
+    url: url + id,
     isShowLoading: true
   })
 }
-
 
 const bindTeamById = (url = '/projectTeam/user/bind', queryInfo: any = {}) => {
   return dgutRequest.post<IDataType>({
@@ -46,10 +44,4 @@ const bindRoleById = (url = '/auth/role/bind', queryInfo: any = {}) => {
   })
 }
 
-export {
-  getUserList,
-  addUser,
-  getUserDetailById,
-  bindTeamById,
-  bindRoleById
-}
+export { getUserList, addUser, getUserDetailById, bindTeamById, bindRoleById }

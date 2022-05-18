@@ -2,7 +2,7 @@ import { Module } from 'vuex'
 import { IRootStore } from '../type'
 import { ILoginState } from './type'
 import router from '@/router'
-import {handleWorkRequest} from '@/util/handleRequest'
+import { handleWorkRequest } from '@/util/handleRequest'
 import { mapMenuToRoutes, mapMenusToPermissions } from '@/util/map-menu'
 import {
   accountLoginRequest,
@@ -24,13 +24,13 @@ const login: Module<ILoginState, IRootStore> = {
   actions: {
     async accountLoginAction({ commit, dispatch }, playload: IAccount) {
       //1
-      const loginData:any = await accountLoginRequest(playload)
+      const loginData: any = await accountLoginRequest(playload)
 
       const { id, name, token } = loginData.data
       //...用户信息
-      if(!loginData.data.success) {
+      if (!loginData.data.success) {
         ElMessage({
-          message: loginData.data?.info ||  loginData.data?.message,
+          message: loginData.data?.info || loginData.data?.message,
           icon: 'error',
           duration: 500
         })
@@ -58,7 +58,7 @@ const login: Module<ILoginState, IRootStore> = {
       router.push('/main')
     },
     async flashMenu({ commit, dispatch }, playload: IAccount) {
-      console.log('在system调用login吗');
+      console.log('在system调用login吗')
 
       const UserInfoMenuRes = await requestUserMenusRole()
       const userMenus = UserInfoMenuRes.data

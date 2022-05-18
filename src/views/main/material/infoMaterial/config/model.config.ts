@@ -36,6 +36,7 @@ export const modelFormConfig: IForm = {
         { title: '耐用品', value: 2 }
       ]
     },
+   
     {
       field: 'gmtBought',
       type: 'date',

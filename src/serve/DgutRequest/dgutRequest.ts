@@ -25,7 +25,7 @@ export async function dgut_getQcode(
 export function getMultiQRcode(url = 'code', allId: any[]) {
   const list: any = []
   for (const id in allId) {
-    list[id] = dgut_getQcode(url, allId[id].materialsId)
+    list[id] = dgut_getQcode(url, allId[id].materialId)
   }
   return Promise.all(list)
 }

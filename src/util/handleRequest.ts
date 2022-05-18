@@ -1,4 +1,5 @@
 import { ElMessage } from 'element-plus'
+import router from "@/router";
 function handleWorkRequest(fn: any, polyFill?: any) {
   //console.log(fn);
   return Promise.resolve(fn.call(null))
@@ -6,7 +7,7 @@ function handleWorkRequest(fn: any, polyFill?: any) {
       if (polyFill) {
         polyFill(res)
       }
-      if (res.data&&res.code==200) {
+      if (res.data && res.code == 200) {
         if (res.data.success) {
           ElMessage({
             message: res.data?.info || res.data?.message,
@@ -37,5 +38,14 @@ const handleResetValue = (formData: any, EmptyObj: any) => {
     formData.value[key] = nativeObj[key]
   }
 }
-
-export { handleWorkRequest, handleResetValue }
+const checkTokenIsVaild = (code: any, fn?: any) => {
+  //console.log('进到 checkTokenIsVaild');
+  if (code == 440 || code == 430) {
+    router.replace('/login')
+    return
+  } else {
+    var res = fn && fn()
+    return res
+  }
+}
+export { handleWorkRequest, handleResetValue, checkTokenIsVaild }

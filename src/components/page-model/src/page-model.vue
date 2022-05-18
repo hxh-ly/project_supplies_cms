@@ -1,22 +1,51 @@
 <!--  -->
 <template>
   <div class="page-model">
-    <el-dialog v-model="dialogVisible" :title="title" :width="modelConfig?.modelWidth || '30%'" destroy-on-close
-      draggable>
+    <el-dialog
+      v-model="dialogVisible"
+      :title="title"
+      :width="modelConfig?.modelWidth || '30%'"
+      destroy-on-close
+      draggable
+    >
       <template v-if="hasTable">
-        <xh-table :listData="innerTable" :listCount="count" v-bind="modelConfig?.tableList" v-model:page="pageInfo">
+        <xh-table
+          :listData="innerTable"
+          :listCount="count"
+          v-bind="modelConfig?.tableList"
+          v-model:page="pageInfo"
+        >
           <template #handle="scope">
             <div class="handle-btn">
-              <el-button v-if="isBorrow && scope.row.borrowState == 1" @click="handleInClick(scope.row)" type="success">
-                入库</el-button>
-              <el-button v-else-if="isReturn && scope.row.borrowState == 0" @click="handleOutClick(scope.row)"
-                type="primary">出库</el-button>
-              <el-button disabled v-else-if="scope.row.borrowState == 2" type="primary">禁止修改</el-button>
+              <el-button
+                v-if="isBorrow && scope.row.borrowState == 1"
+                @click="handleInClick(scope.row)"
+                type="success"
+              >
+                入库</el-button
+              >
+              <el-button
+                v-else-if="isReturn && scope.row.borrowState == 0"
+                @click="handleOutClick(scope.row)"
+                type="primary"
+                >出库</el-button
+              >
+              <el-button
+                disabled
+                v-else-if="scope.row.borrowState == 2"
+                type="primary"
+                >禁止修改</el-button
+              >
             </div>
           </template>
         </xh-table>
       </template>
-      <xh-form v-bind="modelConfig" v-model="formData" ref="xhFormRef" :rules="modelConfig?.rules"></xh-form>
+      <xh-form
+        v-bind="modelConfig"
+        v-model="formData"
+        ref="xhFormRef"
+        :rules="modelConfig?.rules"
+      ></xh-form>
       <!-- <slot name='tableList'></slot> -->
       <slot></slot>
       <template #footer>
@@ -197,7 +226,6 @@ export default defineComponent({
           { ...props.defaultInfo, ...formData.value },
           'edit'
         )
-
       } else {
         if (props.requestInfo?.add) {
           let queryInfo = handleSelectProp(formData.value)
@@ -239,5 +267,4 @@ export default defineComponent({
   }
 })
 </script>
-<style scoped lang="less">
-</style>
+<style scoped lang="less"></style>

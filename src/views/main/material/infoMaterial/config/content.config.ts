@@ -20,12 +20,6 @@ export const contentTableConfig = {
       slotName: 'unitPrice'
     },
     {
-      prop: 'totalNumber',
-      label: '总数量',
-      minWidth: '70',
-      slotName: 'totalNumber'
-    },
-    {
       prop: 'photo',
       label: '物资图片',
       minWidth: '100',

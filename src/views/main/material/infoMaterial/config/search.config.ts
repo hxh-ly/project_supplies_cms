@@ -31,6 +31,15 @@ export const searchFormConfig: IForm = {
       ]
     },
     {
+      field: 'projectTeamIds',
+      type: 'select',
+      label: '项目组',
+      placeholder: '请选择',
+      options: [
+      ],
+      isMultiple:true
+    },
+    {
       field: 'gmtWarehoused',
       type: 'datepicker',
       label: '入库时间',

@@ -106,7 +106,7 @@ export default defineComponent({
       console.log(item)
       defaultInfo.value = { ...item }
       //defaultInfo.value =
-       switch (item.level) {
+      switch (item.level) {
         case 1:
           SwitchModelConfig.value = menuViewConfig
           break

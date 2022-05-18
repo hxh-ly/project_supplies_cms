@@ -18,7 +18,7 @@ const rules = {
       trigger: 'blur'
     }
 
-  /*   ,{
+    /*   ,{
       pattern: /^[a-z0-9]{6,20}$/,
       message: '长度为6-20个字符',
       trigger: 'blur'

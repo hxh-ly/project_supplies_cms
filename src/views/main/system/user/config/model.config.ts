@@ -19,7 +19,7 @@ export const modelFormConfig: IForm = {
       field: 'password',
       type: 'input',
       label: '用户密码',
-      placeholder: '请输入密码',
+      placeholder: '请输入密码'
     },
     {
       field: 'telNumber',

@@ -1,13 +1,29 @@
 <template>
   <div class="user">
-    <page-search :searchFormConfig="searchFormConfig" @resetBtnClick="handleResetClick"
-      @queryBtnClick="handleQueryClick" />
-    <page-content ref="pageContentRef" :contentTableConfig="contentTableConfig" pageName="user" :isDgut="true"
-      :requestInfo="requestInfo" @newBtnClick="handleNewData" @editBtnClick="handleEditData"
-      :allPermissionBtn="allPermissionBtn">
+    <page-search
+      :searchFormConfig="searchFormConfig"
+      @resetBtnClick="handleResetClick"
+      @queryBtnClick="handleQueryClick"
+    />
+    <page-content
+      ref="pageContentRef"
+      :contentTableConfig="contentTableConfig"
+      pageName="user"
+      :isDgut="true"
+      :requestInfo="requestInfo"
+      @newBtnClick="handleNewData"
+      @editBtnClick="handleEditData"
+      :allPermissionBtn="allPermissionBtn"
+    >
     </page-content>
-    <page-model ref="pageModalRef" pageName="user" :modelConfig="modelFormConfigRef" :defaultInfo="defaultInfo"
-      :requestInfo="requestInfo" @confirmClick="handleConfirm">
+    <page-model
+      ref="pageModalRef"
+      pageName="user"
+      :modelConfig="modelFormConfigRef"
+      :defaultInfo="defaultInfo"
+      :requestInfo="requestInfo"
+      @confirmClick="handleConfirm"
+    >
     </page-model>
   </div>
 </template>
@@ -38,7 +54,7 @@ import {
   bindRoleById
 } from '@/serve/DgutRequest/user/index'
 import { handleWorkRequest, handleResetValue } from '@/util/handleRequest'
-import {getSelectIdByName} from '@/util/transData'
+import { getSelectIdByName } from '@/util/transData'
 export default defineComponent({
   name: 'users',
   components: {
@@ -77,9 +93,9 @@ export default defineComponent({
           })
         }) */
     const addDataFn: any = () => {
-  for(let i of modelFormConfigRef.value.formItem) {
-        if( i.field === 'password' || i.field === 'userId') {
-            i.isHidden = false
+      for (let i of modelFormConfigRef.value.formItem) {
+        if (i.field === 'password' || i.field === 'userId') {
+          i.isHidden = false
         }
       }
     }
@@ -88,24 +104,37 @@ export default defineComponent({
       for (let cur of extIdArr) {
         arr.push(idArr.find((item: any) => item.value == cur).title)
       }
-      return arr;
+      return arr
     }
 
     const editDataFn = (item: any, defaultInfo: any) => {
       if (item && item.userId) {
-        getUserDetailById(undefined, item.userId).then(res => {
+        getUserDetailById(undefined, item.userId).then((res) => {
           defaultInfo.value = { ...res.data.detail }
           //roleIds   projectTeamIds
-          let roleNameList = getSelectNameById(modelFormConfigRef.value.formItem.find((v: any) => v.field == 'roleIds')?.options, defaultInfo.value.roleIds)
-          let projectNameList = getSelectNameById(modelFormConfigRef.value.formItem.find((v: any) => v.field == 'projectTeamIds')?.options, defaultInfo.value.projectTeamIds)
-          defaultInfo.value = { ...defaultInfo.value, roleIds: roleNameList, projectTeamIds: projectNameList }
-          console.log(defaultInfo.value);
+          let roleNameList = getSelectNameById(
+            modelFormConfigRef.value.formItem.find(
+              (v: any) => v.field == 'roleIds'
+            )?.options,
+            defaultInfo.value.roleIds
+          )
+          let projectNameList = getSelectNameById(
+            modelFormConfigRef.value.formItem.find(
+              (v: any) => v.field == 'projectTeamIds'
+            )?.options,
+            defaultInfo.value.projectTeamIds
+          )
+          defaultInfo.value = {
+            ...defaultInfo.value,
+            roleIds: roleNameList,
+            projectTeamIds: projectNameList
+          }
+          console.log(defaultInfo.value)
         })
       }
-      debugger
-      for(let i of modelFormConfigRef.value.formItem) {
-        if( i.field === 'password' || i.field === 'userId') {
-            i.isHidden = true
+      for (let i of modelFormConfigRef.value.formItem) {
+        if (i.field === 'password' || i.field === 'userId') {
+          i.isHidden = true
         }
       }
       //动态请求数据 set到 defaultInfo里
@@ -119,14 +148,16 @@ export default defineComponent({
       )
       departMentItem!.options = store.state.entriesDepartment.map((item) => ({
         title: item.name,
-        value: item.projectTeamId
+        value: item.name,
+        realVal:item.projectTeamId
       }))
       const roleItem = modelFormConfig.formItem.find(
         (item) => item.field === 'roleIds'
       )
       roleItem!.options = store.state.entriesRole.map((item) => ({
         title: item.name,
-        value: item.roleId,
+        value: item.name,
+        realVal:item.roleId
       }))
       return modelFormConfig
     })
@@ -173,9 +204,20 @@ export default defineComponent({
       switch (type) {
         case 'edit':
           //绑定角色
-          let  projectTeamIds =getSelectIdByName(true,modelFormConfigRef.value.formItem.find((item:any)=>item.field=='projectTeamIds')?.options ,e.projectTeamIds)
-           let  roleIds =getSelectIdByName(true,modelFormConfigRef.value.formItem.find((item:any)=>item.field=='roleIds')?.options ,e.roleIds)
-          debugger
+          var projectTeamIds = getSelectIdByName(
+            true,
+            modelFormConfigRef.value.formItem.find(
+              (item: any) => item.field == 'projectTeamIds'
+            )?.options,
+            e.projectTeamIds
+          )
+          var roleIds = getSelectIdByName(
+            true,
+            modelFormConfigRef.value.formItem.find(
+              (item: any) => item.field == 'roleIds'
+            )?.options,
+            e.roleIds
+          )
           handleWorkRequest(
             () =>
               bindTeamById(undefined, {
@@ -221,5 +263,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

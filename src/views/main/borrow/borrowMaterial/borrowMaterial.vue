@@ -78,7 +78,7 @@ import {
 } from '@/serve/DgutRequest/dgutRequest'
 import { ElMessage } from 'element-plus'
 import { handleWorkRequest } from '@/util/handleRequest'
-import { log } from 'console'
+import { realValFromName } from '@/util/transData'
 export default defineComponent({
   name: 'borrowMaterial',
   components: {
@@ -114,7 +114,8 @@ export default defineComponent({
         (item: any) => {
           return {
             title: item.info,
-            value: item.code
+            value:item.info,
+            realVal: item.code
           }
         }
       )
@@ -123,8 +124,13 @@ export default defineComponent({
     const modelFormConfigRef = computed(() => {
       return modelFormConfig
     })
-
-    const [pageContentRef, handleResetClick, handleQueryClick] = usePageSearch()
+   const queryCb = (formData: any) => {
+      let queryParams =  {...formData}
+      realValFromName(searchFormConfig,queryParams)
+      debugger
+      return queryParams
+    }
+    const [pageContentRef, handleResetClick, handleQueryClick] = usePageSearch(queryCb)
     const handleSwitchState = (data: any) => {
       //发出请求修改状态
       // console.log('我要取消了', data.borrowInfoId)

@@ -29,30 +29,22 @@ const system: Module<ISystemState, IRootStore> = {
     }
   },
   actions: {
-    async getPageListAction({ commit,dispatch }, payload: any) {
+    async getPageListAction({ commit, dispatch }, payload: any) {
       const pageName = payload.pageName
       const pageUrl = `${payload.url}`
       let pageResult = null
       //毕设
       if (payload.isDgut) {
         pageResult = await dgut_getMaterialListData(pageUrl, payload.queryInfo)
-        let list = pageResult.data.list?.records || pageResult.data.list
-        let totalCount = 0
-        //TODO
-        if (list) {
-          totalCount = list?.length
-          //console.log('list数组', pageResult)
-        } else {
-          list = pageResult.data.tree
-          totalCount = list?.length
-        }
+        let list = pageResult.data.list?.records || pageResult.data.list || pageResult.data.listWithPage?.records ||pageResult.data.tree ||[]
+        let totalCount = pageResult.data.list?.totalCount || pageResult.listWithPage?.totalCount || 0
+        totalCount = totalCount||list.length
         const changePageName =
           pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
         commit(`change${changePageName}List`, list)
         commit(`change${changePageName}Count`, totalCount)
-        if(pageName=='permission')
-        {
-            dispatch('login/flashMenu',null,{ root: true })
+        if (pageName == 'permission') {
+          dispatch('login/flashMenu', null, { root: true })
         }
       }
     },
