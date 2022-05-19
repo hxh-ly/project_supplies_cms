@@ -1,43 +1,24 @@
 <template>
   <div class="user">
-    <page-search
-      :searchFormConfig="searchFormConfigRef"
-      @resetBtnClick="handleResetClick"
-      @queryBtnClick="handleQueryClick"
-      @changeQueryInfo="handleChangeQueryInfo"
-    />
-    <page-content
-      ref="pageContentRef"
-      :contentTableConfig="contentTableConfig"
-      pageName="borrowInfo"
-      @newBtnClick="handleNewData"
-      @editBtnClick="handleEditData"
-      @cancelBtnClick="handleSwitchState"
-      :isDgut="true"
-      :requestInfo="requestInfo"
-    >
+    <page-search :searchFormConfig="searchFormConfigRef" @resetBtnClick="handleResetClick"
+      @queryBtnClick="handleQueryClick" @changeQueryInfo="handleChangeQueryInfo" ref="pageSearchRef" />
+    <page-content ref="pageContentRef" :queryCb="queryCb" :contentTableConfig="contentTableConfig" pageName="borrowInfo"
+      @newBtnClick="handleNewData" @editBtnClick="handleEditData" @cancelBtnClick="handleSwitchState" :isDgut="true"
+      :requestInfo="requestInfo">
       <template #gmtStart="scope">{{
-        $filters.formatTime(scope.row.gmtStart)
+          $filters.formatTime(scope.row.gmtStart)
       }}</template>
       <template #gmtEnd="scope">{{
-        $filters.formatTime(scope.row.gmtEnd)
+          $filters.formatTime(scope.row.gmtEnd)
       }}</template>
       <template #userInfo="scope">
         {{ scope.row.userInfo?.account || 0 }}
       </template>
       <template #userId="scope">{{ scope.row.userId || 0 }}</template>
     </page-content>
-    <page-model
-      ref="pageModalRef"
-      fnType="edit"
-      pageName="borrowInfo"
-      :modelConfig="modelFormConfigRef"
-      @materialsInStore="handleInStore"
-      @materialsOutStore="handleOutStore"
-      :defaultInfo="defaultInfo"
-      :hasTable="true"
-      :requestInfo="requestInfo"
-    >
+    <page-model ref="pageModalRef" fnType="edit" pageName="borrowInfo" :modelConfig="modelFormConfigRef"
+      @materialsInStore="handleInStore" @materialsOutStore="handleOutStore" :defaultInfo="defaultInfo" :hasTable="true"
+      :requestInfo="requestInfo">
       <template #tableList>
         <!--  <xh-table
           :listData="materialsInfo"
@@ -79,6 +60,7 @@ import {
 import { ElMessage } from 'element-plus'
 import { handleWorkRequest } from '@/util/handleRequest'
 import { realValFromName } from '@/util/transData'
+import formatUtcString from '@/util/date-format'
 export default defineComponent({
   name: 'borrowMaterial',
   components: {
@@ -87,7 +69,6 @@ export default defineComponent({
     pageModel
   },
   setup() {
-    /*1 页面自己的逻辑：添加显示哪些列表项 编辑显示哪些列表项 */
     let materialsInfo = reactive([])
     let queryInfo = ref({})
     provide('queryInfo', queryInfo)
@@ -98,7 +79,6 @@ export default defineComponent({
       )
       obj!.isHidden = false
     }
-    // console.log('当前实例', getCurrentInstance())
     const editDataFn = async (item: any) => {
       //请求详情数据
       return (await dgut_applyDetail(undefined, item.borrowInfoId)).data.detail
@@ -114,7 +94,7 @@ export default defineComponent({
         (item: any) => {
           return {
             title: item.info,
-            value:item.info,
+            value: item.info,
             realVal: item.code
           }
         }
@@ -124,13 +104,23 @@ export default defineComponent({
     const modelFormConfigRef = computed(() => {
       return modelFormConfig
     })
-   const queryCb = (formData: any) => {
-      let queryParams =  {...formData}
-      realValFromName(searchFormConfig,queryParams)
-      debugger
+    const queryCb = (formData: any) => {
+      let queryParams = { ...formData }
+      realValFromName(searchFormConfig, queryParams)
+       if(queryParams['gmtWarehoused']) {
+         queryParams['startWarehoused'] = formatUtcString(queryParams['gmtWarehoused'][0])
+         queryParams['endWarehoused'] = formatUtcString(queryParams['gmtWarehoused'][1])
+         delete queryParams['gmtWarehoused']
+      }
+      if( queryParams['gmtBought']) {
+         queryParams['startBought'] = formatUtcString(queryParams['gmtBought'][0])
+         queryParams['endBought'] = formatUtcString(queryParams['gmtBought'][1])
+         delete queryParams['gmtBought']
+      }
       return queryParams
     }
-    const [pageContentRef, handleResetClick, handleQueryClick] = usePageSearch(queryCb)
+    const [pageContentRef, handleResetClick, handleQueryClick] =
+      usePageSearch(queryCb)
     const handleSwitchState = (data: any) => {
       //发出请求修改状态
       // console.log('我要取消了', data.borrowInfoId)
@@ -148,7 +138,7 @@ export default defineComponent({
       handleWorkRequest(
         () => dgut_materialReturn(undefined, item),
         () => {
-          ;(pageModalRef as any).value.dialogVisible = false
+          ; (pageModalRef as any).value.dialogVisible = false
         }
       )
     }
@@ -157,17 +147,17 @@ export default defineComponent({
       handleWorkRequest(
         () => dgut_materialBorrow(undefined, item),
         () => {
-          ;(pageModalRef as any).value.dialogVisible = false
+          ; (pageModalRef as any).value.dialogVisible = false
         }
       )
     }
-
     const handleChangeQueryInfo = (v: any) => {
       queryInfo.value = v
     }
     const requestInfo = {
       get: '/borrowInfo/list'
     }
+    const pageSearchRef = ref(null)
     return {
       contentTableConfig,
       searchFormConfig,
@@ -185,16 +175,16 @@ export default defineComponent({
       handleEditData,
       handleSwitchState,
       defaultInfo,
-
       materialsInfo,
       count,
-
       //详情里的操作
       handleInStore,
       handleOutStore,
       queryInfo,
       handleChangeQueryInfo,
-      requestInfo
+      requestInfo,
+      pageSearchRef,
+      queryCb
     }
   }
 })

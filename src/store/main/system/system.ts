@@ -36,9 +36,17 @@ const system: Module<ISystemState, IRootStore> = {
       //毕设
       if (payload.isDgut) {
         pageResult = await dgut_getMaterialListData(pageUrl, payload.queryInfo)
-        let list = pageResult.data.list?.records || pageResult.data.list || pageResult.data.listWithPage?.records ||pageResult.data.tree ||[]
-        let totalCount = pageResult.data.list?.totalCount || pageResult.listWithPage?.totalCount || 0
-        totalCount = totalCount||list.length
+        const list =
+          pageResult.data.list?.records ||
+          pageResult.data.list ||
+          pageResult.data.listWithPage?.records ||
+          pageResult.data.tree ||
+          []
+        let totalCount =
+          pageResult.data.list?.totalCount ||
+          pageResult.listWithPage?.totalCount ||
+          0
+        totalCount = totalCount || list.length
         const changePageName =
           pageName.slice(0, 1).toUpperCase() + pageName.slice(1)
         commit(`change${changePageName}List`, list)

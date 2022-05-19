@@ -26,11 +26,13 @@ export const modelFormConfig: IForm = {
       options: [
         {
           title: '是',
-          value: true
+          value: '是',
+          realVal:true
         },
         {
           title: '否',
-          value: false
+          value: '否',
+          realVal: false
         }
       ]
     },
@@ -74,7 +76,7 @@ export const modelFormConfig: IForm = {
       placeholder: '请选择所属项目组',
       type: 'select',
       options: [
-        {
+       /*  {
           title: 'RC',
           value: '34847349384'
         },
@@ -85,11 +87,11 @@ export const modelFormConfig: IForm = {
         {
           title: '普通项目组',
           value: '34847349384'
-        }
+        } */
       ]
     },
     {
-      field: 'upLoad',
+      field: 'photo',
       label: '物资图片',
       type: 'upLoad'
       //placeholder: '请输入备注信息'

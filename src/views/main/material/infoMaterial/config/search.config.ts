@@ -35,9 +35,8 @@ export const searchFormConfig: IForm = {
       type: 'select',
       label: '项目组',
       placeholder: '请选择',
-      options: [
-      ],
-      isMultiple:true
+      options: [],
+      isMultiple: true
     },
     {
       field: 'gmtWarehoused',

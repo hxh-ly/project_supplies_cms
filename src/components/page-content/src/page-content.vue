@@ -125,13 +125,12 @@ import {
   reactive,
   inject,
   getCurrentInstance,
-  toRefs
+  toRefs,
 } from 'vue'
 
 import XhTable from '@/base-ui/table'
 import { userStore } from '@/store'
 import { usePermission } from '@/hooks/use-permission'
-import { request } from 'http'
 import { ElMessageBox } from 'element-plus'
 const path = require('path')
 export default defineComponent({
@@ -165,6 +164,13 @@ export default defineComponent({
     },
     allPermissionBtn: {
       type: Array
+    },
+    globalSearchData:{
+      type:Object,
+      default:()=>({})
+    },
+    queryCb:{
+      type:Function
     }
   },
   components: {
@@ -174,17 +180,21 @@ export default defineComponent({
   emits: ['newBtnClick', 'editBtnClick', 'handlePrint', 'cancelBtnClick'],
   setup(props, { emit }) {
     const store = userStore()
-    //1 双向绑定pageInfo  当前页，当前条数
     const pageInfo = ref({ currentPage: 1, pageSize: 10 })
-
-    let queryInfo: any = inject('queryInfo')
-
-    watch(pageInfo, (newVal) => {
-      //debugger
-      //console.log('换页', {...queryInfo.value})
-      //获取 inject的参数
-      getPageData({ ...newVal })
-    })
+    const that:any=getCurrentInstance()
+    watch(pageInfo, (newVal:any) => {
+      //拿到兄弟组件的值
+      let globalSearchData=that.parent?.refs?.pageSearchRef?.formData
+      let queryCb = props.queryCb
+      let searchData= {...newVal}
+      if(globalSearchData&&Object.keys(globalSearchData).length>0) {
+        searchData={...searchData,...globalSearchData}
+      }
+      if(queryCb) {
+        searchData=queryCb(searchData)
+      }
+      getPageData(searchData)
+    },{deep:true,immediate:false})
     //2 发送网络请求
     const getPageData = (queryInfo: any = {}) => {
       if (props.isDgut) {
@@ -196,7 +206,7 @@ export default defineComponent({
             {
               size: pageInfo.value.pageSize,
               current: pageInfo.value.currentPage,
-              paginated:true
+              paginated: true
             },
             queryInfo,
             props.listOtherParams
@@ -214,15 +224,12 @@ export default defineComponent({
       return arr.find((item: any) => name == item.title)
     }
     getPageData()
-    //3 vuex中能获取数据
     const userList = computed(() =>
       store.getters['system/pageListData'](props.pageName)
     )
     const userCount = computed(() =>
       store.getters['system/pageListCount'](props.pageName)
     )
-    //console.log('列表数据！！！！！！！！！！！', userList)
-    //4 动态获取到propList字段
     const otherPropSlots = props.contentTableConfig?.propList.filter(
       (item: any) => {
         if (item.slotName == 'status') return false
@@ -232,8 +239,6 @@ export default defineComponent({
         return true
       }
     )
-    // console.log('动态字段otherPropSlots', otherPropSlots)
-    // 5 删除 | 创建 |更新
     const handleDelClick = (item: any) => {
       ElMessageBox.confirm('确定删除吗')
         .then(() => {
@@ -262,9 +267,6 @@ export default defineComponent({
       emit('cancelBtnClick', item)
     }
     const selectPrintItem = ref([])
-    /*   watch(()=>[selectPrintItem.value],(newVal)=>{
-      console.log('是否监听到改变selectPrintItem',newVal);
-    }) */
     const emitSelectionChange = (v: any) => {
       selectPrintItem.value = v
     }

@@ -4,6 +4,7 @@
       :searchFormConfig="searchFormConfig"
       @resetBtnClick="handleResetClick"
       @queryBtnClick="handleQueryClick"
+      ref="pageSearchRef"
     />
     <page-content
       ref="pageContentRef"
@@ -11,9 +12,11 @@
       pageName="user"
       :isDgut="true"
       :requestInfo="requestInfo"
+      :globalSearchData='globalSearchData'
       @newBtnClick="handleNewData"
       @editBtnClick="handleEditData"
       :allPermissionBtn="allPermissionBtn"
+      @changeQueryInfo="changeQueryInfo"
     >
     </page-content>
     <page-model
@@ -36,7 +39,8 @@ import {
   watchEffect,
   onMounted,
   reactive,
-  toRaw
+  toRaw,
+  watch
 } from 'vue'
 import { searchFormConfig } from './config/search.config'
 import { contentTableConfig } from './config/content.config'
@@ -63,6 +67,7 @@ export default defineComponent({
     pageModel
   },
   setup() {
+    const globalSearchData=ref({})
     const requestInfo = {
       update: '/auth/user/update',
       get: '/user/list',
@@ -149,7 +154,7 @@ export default defineComponent({
       departMentItem!.options = store.state.entriesDepartment.map((item) => ({
         title: item.name,
         value: item.name,
-        realVal:item.projectTeamId
+        realVal: item.projectTeamId
       }))
       const roleItem = modelFormConfig.formItem.find(
         (item) => item.field === 'roleIds'
@@ -157,7 +162,7 @@ export default defineComponent({
       roleItem!.options = store.state.entriesRole.map((item) => ({
         title: item.name,
         value: item.name,
-        realVal:item.roleId
+        realVal: item.roleId
       }))
       return modelFormConfig
     })
@@ -242,6 +247,10 @@ export default defineComponent({
     const allProjectTeams = computed(() => {
       return store.state.entriesDepartment
     })
+    const changeQueryInfo=(searchData:any)=>{
+      globalSearchData.value = searchData
+    }
+    const pageSearchRef=ref(null)
     return {
       searchFormConfig,
       contentTableConfig,
@@ -257,7 +266,10 @@ export default defineComponent({
       handleConfirm, //确定添加或者修改
       allPermissionBtn,
       requestInfo,
-      allProjectTeams //所有项目组
+      allProjectTeams, //所有项目组
+      globalSearchData, //查询参数的存放地方
+      changeQueryInfo, //pageSearch中modelValue的emit出来
+      pageSearchRef
     }
   }
 })

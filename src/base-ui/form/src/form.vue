@@ -134,8 +134,9 @@
                   :before-upload="beforeAvatarUpload"
                   :prop="item.field"
                   :disabled="item.disable"
+                  :auto-upload="true"
                 >
-                  <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                  <img v-if="modelValue[`${item.field}`]"  :src="modelValue[`${item.field}`]" class="avatar" />
                   <el-icon v-else class="avatar-uploader-icon">
                     <plus />
                   </el-icon>
@@ -205,30 +206,12 @@ export default defineComponent({
   emits: ['update:modelValue', 'resetFormConfigRef', 'delSelect'],
   setup(props, { emit }) {
     onMounted(() => {
-      console.log('.....')
+    /*   if('photo' in props!!.modelValue!!) {
+        console.log('..... props.modelValue',props.modelValue)
+      } */
     })
-    // 外层的formData【key】=''  这样改能影响到引用
-    /*     let formData = ref({ ...props.modelValue })
-     */
-    let imageUrl = ref('')
-    watch(
-      () => props.modelValue?.file,
-      (newVal) => {
-        if (!newVal) {
-          imageUrl.value = ''
-        }
-      },
-      {
-        deep: true
-      }
-    )
-    watch(
-      () => imageUrl,
-      (newVal) => {
-        console.log(newVal)
-      }
-    )
     const elNativeFromRef = ref<any>()
+    let imageUrl = ref('')
     let isMaterialDownsList =
       props.formItem[props.formItem.length - 1]?.field == 'materialIdNumberMap'
     let downOptions = reactive(
@@ -294,13 +277,27 @@ export default defineComponent({
     }
     //处理图片上传
     const beforeAvatarUpload: any = (rawFile: any) => {
-      console.log(rawFile)
-      imageUrl.value = URL.createObjectURL(rawFile)
-      //var fr = new FileReader()
-      //console.log(fr.readAsArrayBuffer(rawFile));
+      if(rawFile) {
+      props.modelValue!.photo =  URL.createObjectURL(rawFile)
+      props.modelValue!.upload =  URL.createObjectURL(rawFile)
       props.modelValue!.file = rawFile
+      }
+      return false
       // props.modelValue!.file = (fr.readAsArrayBuffer(rawFile) as any).result
     }
+     /*  watch(
+      () => props.modelValue?.photo,
+      (newVal) => {
+        console.log('是否有watch到',newVal);
+
+        if (!newVal) {
+          imageUrl.value = ''
+        }
+      },
+      {
+        deep: true
+      }
+    ) */
     return {
       handleValueChange,
       handleMaterialChange,
@@ -310,8 +307,7 @@ export default defineComponent({
       downOptions,
       elNativeFromRef,
       submitForm,
-      //上传图片
-      beforeAvatarUpload,
+      beforeAvatarUpload,//上传图片
       imageUrl
     }
   }

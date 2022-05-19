@@ -29,23 +29,25 @@ formData 待修改参数
 
 // 是 ---->  1
 // string ---> id
-const realValFromName=(searchFormConfig:any,formData:any)=>{
+const realValFromName = (searchFormConfig: any, formData: any) => {
   searchFormConfig.formItem.forEach((item: any) => {
     if (item.type == 'select') {
-      let field = item.field;
-      let readyTransform  = formData[`${field}`]
+      const field = item.field
+      const readyTransform = formData[`${field}`]
       if (!item.isMultiple) {
         //单个
-        let cur = item.options.find((options_item: any) =>  options_item.title == readyTransform)
-        if(cur) {
+        const cur = item.options.find(
+          (options_item: any) => options_item.title == readyTransform
+        )
+        if (cur) {
           formData[`${field}`] = cur.realVal
         }
-      }else {
+      } else {
         //多个    ['aaa','bbb','ccc'] ---> ['1','2','3']
-        let arr = getSelectIdByName(true,item.options,readyTransform)
+        const arr = getSelectIdByName(true, item.options, readyTransform)
         formData[`${field}`] = arr
       }
     }
   })
 }
-export { getSelectNameById, getSelectIdByName,realValFromName }
+export { getSelectNameById, getSelectIdByName, realValFromName }

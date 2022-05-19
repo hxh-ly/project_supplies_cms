@@ -3,9 +3,7 @@
   <div class="nav-breadcrumb">
     <el-breadcrumb separator="/">
       <template v-for="item in breadcrumbs" :key="item.path">
-        <el-breadcrumb-item >{{
-          item.name
-        }} </el-breadcrumb-item>
+        <el-breadcrumb-item>{{ item.name }} </el-breadcrumb-item>
       </template>
     </el-breadcrumb>
   </div>

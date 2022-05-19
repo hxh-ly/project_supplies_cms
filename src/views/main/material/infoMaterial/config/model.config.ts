@@ -19,12 +19,12 @@ export const modelFormConfig: IForm = {
         { title: '否', value: 0 }
       ]
     }, */
-    {
+    /* {
       field: 'model',
       type: 'input',
       label: '型号',
       placeholder: '请输入型号'
-    },
+    }, */
     {
       field: 'type',
       type: 'select',
@@ -36,7 +36,6 @@ export const modelFormConfig: IForm = {
         { title: '耐用品', value: 2 }
       ]
     },
-   
     {
       field: 'gmtBought',
       type: 'date',
@@ -52,7 +51,6 @@ export const modelFormConfig: IForm = {
       options: [],
       disable: true
     },
-
     {
       field: 'gmtWarehoused',
       type: 'date',
@@ -96,6 +94,12 @@ export const modelFormConfig: IForm = {
       label: '备注',
       placeholder: '备注',
       options: []
+    },
+    {
+      field: 'photo',
+      label: '物资图片',
+      type: 'upLoad'
+      //placeholder: '请输入备注信息'
     }
   ],
   itemStyle: {

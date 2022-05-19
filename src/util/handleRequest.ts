@@ -1,16 +1,17 @@
 import { ElMessage } from 'element-plus'
-import router from "@/router";
+import router from '@/router'
 function handleWorkRequest(fn: any, polyFill?: any) {
   //console.log(fn);
   return Promise.resolve(fn.call(null))
     .then((res) => {
+      console.log(res);
       if (polyFill) {
         polyFill(res)
       }
       if (res.data && res.code == 200) {
         if (res.data.success) {
           ElMessage({
-            message: res.data?.info || res.data?.message,
+            message: res.data?.info || res.data?.message ||res.message ,
             icon: 'success',
             duration: 500
           })
@@ -44,7 +45,7 @@ const checkTokenIsVaild = (code: any, fn?: any) => {
     router.replace('/login')
     return
   } else {
-    var res = fn && fn()
+    const res = fn && fn()
     return res
   }
 }

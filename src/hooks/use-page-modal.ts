@@ -15,8 +15,6 @@ export const usePageModal = (addFnCb?: CallbackFn, editFnCb?: CallbackFn) => {
   }
   const handleEditData = async (item: any) => {
     defaultInfo.value = { ...item }
-    //console.log('点击编辑的默认数据来源 defaultInfo.value', defaultInfo.value)
-
     if (pageModalRef.value) {
       // pageModalRef.value.totalInfoItem = { ...item }
       pageModalRef.value.dialogVisible = true

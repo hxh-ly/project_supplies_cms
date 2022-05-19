@@ -43,6 +43,8 @@ import {
 } from '@/serve/DgutRequest/dgutRequest'
 import { normalRequest } from '@/serve/index'
 import { ElMessage, ElForm } from 'element-plus'
+import { realValFromName } from '@/util/transData'
+import { handleWorkRequest } from '@/util/handleRequest'
 export default defineComponent({
   props: {
     title: {
@@ -87,7 +89,9 @@ export default defineComponent({
         detail: '',
         remark: '',
         projectTeamId: '',
-        file: ''
+        file: '',
+        photo:'',
+        upload:''
       }
     }
 
@@ -102,76 +106,34 @@ export default defineComponent({
       projectFormItem!.options = store.state.entriesDepartment.map(
         (pItem: any) => ({
           title: pItem.name,
-          value: pItem.projectTeamId
+          value: pItem.name,
+          realVal: pItem.projectTeamId
         })
       )
       return modelFormConfig
     })
-
     const handleResetValue = () => {
       const obj: any = createFormData()
       for (let key in obj) {
         formData.value[key] = obj[key]
       }
     }
-
     const handleConfirmClick = async () => {
       let formNeedData = {
         ...formData.value,
         unitPrice: Number(formData.value.unitPrice),
-        type: 2,
-        gmtBought: $filters.formatTime(formData.value.gmtBought),
-        gmtWarehoused: $filters.formatTime(formData.value.gmtWarehoused)
+        //type: 2,
+        gmtBought: formData.value.gmtBought? $filters.formatTime(formData.value.gmtBought):$filters.formatTime(new Date()),
+        gmtWarehoused: formData.value.gmtWarehoused? $filters.formatTime(formData.value.gmtWarehoused):$filters.formatTime(new Date())
       }
-      console.log(formNeedData)
-      infoApplyFormRef.value?.submitForm(
+      realValFromName( modelFormConfig ,formNeedData)
+     // console.log(formNeedData)
+     /*  infoApplyFormRef.value?.submitForm(
         infoApplyFormRef.value?.elNativeFromRef,
-        async () => {
-          await normalRequest('/material/input', formNeedData)
-          handleResetValue()
-        }
-      )
-      /*  await infoApplyFormRef.value?.elNativeFromRef.validate(
-        (valid: boolean, fields: any) => {
-          if (valid) {
-            console.log('submit!')
-            let sendParams = {
-              ...formData.value,
-              type: '1',
-              gmtBought: $filters.formatTime(formData.value.gmtBought),
-              gmtWarehoused: $filters.formatTime(formData.value.gmtWarehoused)
-            }
-            //console.log(sendParams)
-            dgut_setOnApplyForm('/material/input', sendParams)
-              .then((res) => {
-                if (res.data.success) {
-                  handleResetValue()
-                  ElMessage({
-                    message: '添加物资成功',
-                    type: 'success',
-                    duration: 500
-                  })
-                } else {
-                  throw new Error('请求失败')
-                }
-              })
-              .catch((err) => {
-                console.log(err)
-                ElMessage({
-                  message: '接口有问题',
-                  type: 'error',
-                  duration: 500
-                })
-              })
-          } else {
-            console.log('error submit!', fields)
-          }
-        }
+        handleWorkRequest(()=>normalRequest('/material/input','post', formNeedData),()=>handleResetValue())
       ) */
+       handleWorkRequest(()=>normalRequest('/material/input','post', formNeedData),()=>handleResetValue())
     }
-    onMounted(() => {
-      console.log(infoApplyFormRef)
-    })
     return {
       infoApplyFormRef,
       formData,

@@ -1,6 +1,6 @@
 import HXHRequest from './request'
 import { VUE_APP_BASE_URL, TIMEOUT } from './DgutRequest/config'
-import {checkTokenIsVaild} from '@/util/handleRequest'
+import { checkTokenIsVaild } from '@/util/handleRequest'
 import axios from 'axios'
 import localCache from '@/util/cache'
 const materialUrl = '119.91.237.88:8082'
@@ -26,8 +26,6 @@ export const xhrequest = new HXHRequest({
   }
 })
 
-
-
 export const dgutRequest = new HXHRequest({
   // baseURL: 'http://4383d8d6-8af9-4a2a-92e6-896bfc356b38.mock.pstmn.io',
   // baseURL:'http://119.91.237.88:8082',
@@ -48,7 +46,7 @@ export const dgutRequest = new HXHRequest({
       return config
     },
     resInterceptor: (config) => {
-     return checkTokenIsVaild(config.data.code,()=>{
+      return checkTokenIsVaild(config.data.code, () => {
         return config
       })
     }
@@ -80,35 +78,43 @@ export const dgutRequest = new HXHRequest({
     ]
   })
 } */
-export const normalRequest = async (url: string, data: any) => {
+export const normalRequest = async  (
+  url: string,
+  method: any = 'post',
+  data: any
+) => {
   const formData: any = new FormData()
   for (const i in data) {
     formData.append(i, data[i])
   }
-  console.log(formData)
-  await axios({
-    method: 'post',
+  //console.log(formData)
+  const token = localCache.getItem('token')
+  let instance = axios.create({
+    baseURL: '/dgut',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'auth-token': token
+    },
+    timeout: TIMEOUT
+  })
+  instance.interceptors.response.use((config) => {
+    return checkTokenIsVaild(config.data.code, () => {
+      return config.data
+    })
+  })
+return   instance({
+    url:url,
+    data: formData,
+    method: method
+  })
+  /*   await axios({
+    method,
     url: '/dgut' + url,
     timeout: TIMEOUT,
     headers: {
       'Content-Type': 'multipart/form-data',
-      'auth-token': 'ylhao666'
+      'auth-token': token
     },
     data: formData
-  })
+  }) */
 }
-
-/* xhrequest222 = new HXHRequest({
-  baseURL: VUE_APP_BASE_URL,
-  timeout: TIMEOUT,
-  interceptors: {
-    requestInterceptor: (config) => {
-      console.log('请求加loading=====')
-      return config
-    },
-    resInterceptor: (config) => {
-      console.log('响应的拦截')
-      return config
-    }
-  }
-}) */

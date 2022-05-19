@@ -35,9 +35,10 @@ export default defineComponent({
       originFormData[item.field] = ''
     }
     const formData = ref(originFormData)
+    //ref侦听得到，需要deep，但是新旧值一样
     watch(formData, (newVal, oldVal) => {
       emit('changeQueryInfo', newVal)
-    })
+    },{deep:true})
 
     const handleResetClick = () => {
       // for (const key in formOriginData) {
@@ -48,14 +49,12 @@ export default defineComponent({
     }
     const handleQueryClick = () => {
       //在这里需要把查询参数传递出去 ，修改就跟着 全局的查询参数
-
       emit('queryBtnClick', formData.value)
     }
-
     return {
       formData,
       handleResetClick,
-      handleQueryClick
+      handleQueryClick,
     }
   }
 })
