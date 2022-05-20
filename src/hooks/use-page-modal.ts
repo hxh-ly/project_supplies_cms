@@ -9,6 +9,7 @@ export const usePageModal = (addFnCb?: CallbackFn, editFnCb?: CallbackFn) => {
   const handleNewData = (type: any, item: any) => {
     defaultInfo.value = {}
     if (pageModalRef.value) {
+      pageModalRef.value.curFormType='add'
       pageModalRef.value.dialogVisible = true
     }
     addFnCb && addFnCb()
@@ -16,7 +17,7 @@ export const usePageModal = (addFnCb?: CallbackFn, editFnCb?: CallbackFn) => {
   const handleEditData = async (item: any) => {
     defaultInfo.value = { ...item }
     if (pageModalRef.value) {
-      // pageModalRef.value.totalInfoItem = { ...item }
+      pageModalRef.value.curFormType='edit'
       pageModalRef.value.dialogVisible = true
     }
     if (pageModalRef.value && editFnCb && pageModalRef.value.hasTable) {

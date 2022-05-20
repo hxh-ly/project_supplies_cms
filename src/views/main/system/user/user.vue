@@ -12,7 +12,7 @@
       pageName="user"
       :isDgut="true"
       :requestInfo="requestInfo"
-      :globalSearchData='globalSearchData'
+      :globalSearchData="globalSearchData"
       @newBtnClick="handleNewData"
       @editBtnClick="handleEditData"
       :allPermissionBtn="allPermissionBtn"
@@ -58,7 +58,7 @@ import {
   bindRoleById
 } from '@/serve/DgutRequest/user/index'
 import { handleWorkRequest, handleResetValue } from '@/util/handleRequest'
-import { getSelectIdByName } from '@/util/transData'
+import { getSelectIdByName,NameFromRealVal } from '@/util/transData'
 export default defineComponent({
   name: 'users',
   components: {
@@ -67,7 +67,7 @@ export default defineComponent({
     pageModel
   },
   setup() {
-    const globalSearchData=ref({})
+    const globalSearchData = ref({})
     const requestInfo = {
       update: '/auth/user/update',
       get: '/user/list',
@@ -116,24 +116,7 @@ export default defineComponent({
       if (item && item.userId) {
         getUserDetailById(undefined, item.userId).then((res) => {
           defaultInfo.value = { ...res.data.detail }
-          //roleIds   projectTeamIds
-          let roleNameList = getSelectNameById(
-            modelFormConfigRef.value.formItem.find(
-              (v: any) => v.field == 'roleIds'
-            )?.options,
-            defaultInfo.value.roleIds
-          )
-          let projectNameList = getSelectNameById(
-            modelFormConfigRef.value.formItem.find(
-              (v: any) => v.field == 'projectTeamIds'
-            )?.options,
-            defaultInfo.value.projectTeamIds
-          )
-          defaultInfo.value = {
-            ...defaultInfo.value,
-            roleIds: roleNameList,
-            projectTeamIds: projectNameList
-          }
+          NameFromRealVal(modelFormConfigRef.value,defaultInfo.value)
           console.log(defaultInfo.value)
         })
       }
@@ -202,7 +185,7 @@ export default defineComponent({
     }
     const handleConfirm = async (e: any, type: any) => {
       //拿到下拉的options
-      /*  debugger
+      /*
       let queryInfo =  handleSelectProp(e)
       await handleWorkRequest(() => addUser(undefined, queryInfo), (res: any) => { console.log(res) }) */
       //  console.log('操作基本信息后去修改其他接口',e,type);
@@ -241,16 +224,17 @@ export default defineComponent({
               console.log(res)
             }
           )
-          break
       }
+
+
     }
     const allProjectTeams = computed(() => {
       return store.state.entriesDepartment
     })
-    const changeQueryInfo=(searchData:any)=>{
+    const changeQueryInfo = (searchData: any) => {
       globalSearchData.value = searchData
     }
-    const pageSearchRef=ref(null)
+    const pageSearchRef = ref(null)
     return {
       searchFormConfig,
       contentTableConfig,

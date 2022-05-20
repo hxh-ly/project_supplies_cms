@@ -9,7 +9,7 @@ export function usePageSearch(queryCb?: any) {
     pageContentRef.value?.getPageData()
   }
   const handleQueryClick = (queryInfo: any) => {
-    let modifyInfo = queryCb?queryCb(queryInfo):queryInfo
+    const modifyInfo = queryCb ? queryCb(queryInfo) : queryInfo
 
     pageContentRef.value?.getPageData(modifyInfo)
   }

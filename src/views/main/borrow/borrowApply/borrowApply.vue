@@ -19,14 +19,12 @@
         </template>
       </xh-form>
     </div>
-    <keep-alive>
-      <material-list-dialog
+       <material-list-dialog
         ref="pageModalRef"
         :allMaterials="allMaterials"
         :modelConfig="dialogConfigRef"
         @addMaterialItem="handleAddMaterial"
       ></material-list-dialog>
-    </keep-alive>
   </div>
 </template>
 <script lang="ts">
@@ -36,7 +34,8 @@ import {
   watch,
   computed,
   reactive,
-  getCurrentInstance
+  getCurrentInstance,
+  onUnmounted
 } from 'vue'
 import { modelFormConfig } from './config/model.config'
 import { userStore } from '@/store'
@@ -51,6 +50,8 @@ import pageModel from '@/components/page-model'
 import { contentTableConfig } from './config/content.config'
 import { handleWorkRequest } from '@/util/handleRequest'
 import materialListDialog from './cmp/materialListDialog.vue'
+import infoMaterial from '@/views/main/material/infoMaterial/infoMaterial.vue'
+import bus from 'vue3-eventbus'
 export default defineComponent({
   props: {
     title: {
@@ -77,17 +78,12 @@ export default defineComponent({
   components: {
     XhForm,
     pageModel,
-    materialListDialog
+    materialListDialog,
+    infoMaterial
   },
   setup(props) {
     //0 请求所有的物资数据
     let allMaterials = ref({})
-    dgut_getMaterialListData('/material/list', { size: 50, current: 1 }).then(
-      (res: any) => {
-        allMaterials.value = res.data?.list?.records || []
-        //console.log(allMaterials.value);
-      }
-    )
     //1 全局的日期格式化
     const cns: any = getCurrentInstance()
     const $filters = cns.appContext.config.globalProperties.$filters
@@ -142,13 +138,23 @@ export default defineComponent({
     const handleAddMaterial = (v: any) => {
       formData.value['materialIdNumberMap'] ||
         (formData.value['materialIdNumberMap'] = [])
+        if(v &&v.length) {
       v.forEach((item: any) => {
-        formData.value['materialIdNumberMap'].push({
+        let id = item.materialId
+        let extMaterialItem = formData.value['materialIdNumberMap'].find((q:any)=>q.id==id)
+        if(!extMaterialItem) {
+          formData.value['materialIdNumberMap'].push({
           id: item.materialId,
+          name:item.name,
           num: 0
         })
+        }
       })
+        }
     }
+    onUnmounted(() => {
+      bus.off('foo')
+    })
     return {
       formData,
       handleConfirmClick,

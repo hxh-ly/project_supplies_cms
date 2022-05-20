@@ -27,7 +27,7 @@ export const modelFormConfig: IForm = {
         {
           title: '是',
           value: '是',
-          realVal:true
+          realVal: true
         },
         {
           title: '否',
@@ -76,7 +76,7 @@ export const modelFormConfig: IForm = {
       placeholder: '请选择所属项目组',
       type: 'select',
       options: [
-       /*  {
+        /*  {
           title: 'RC',
           value: '34847349384'
         },

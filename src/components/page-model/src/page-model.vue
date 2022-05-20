@@ -41,7 +41,7 @@
         </xh-table>
       </template>
       <xh-form
-        v-bind="modelConfig"
+        v-bind="modelFilterConfig"
         v-model="formData"
         ref="xhFormRef"
         :rules="modelConfig?.rules"
@@ -66,7 +66,8 @@ import {
   nextTick,
   getCurrentInstance,
   onMounted,
-  toRaw
+  toRaw,
+  computed
 } from 'vue'
 import XhForm from '@/base-ui/form'
 import XhTable from '@/base-ui/table'
@@ -77,7 +78,7 @@ import {
   dgut_applyDetail
 } from '@/serve/DgutRequest/dgutRequest'
 import { ElMessageBox } from 'element-plus'
-
+import {realValFromName} from '@/util/transData'
 /* xhfrom的配置 */
 export default defineComponent({
   emits: ['materialsInStore', 'materialsOutStore', 'confirmClick'],
@@ -139,6 +140,12 @@ export default defineComponent({
     const dialogVisible = ref(false)
     const formData = ref<any>({})
     const store = userStore()
+    let curFormType:any=ref(null)
+    const modelFilterConfig = computed(()=>{
+     let result = curFormType.value == 'add' ? true : isModified ? false : true
+      props.modelConfig?.formItem.forEach((item:any) => item.disable = result)
+      return  props.modelConfig
+    })
     const handleSelectProp = (e: any) => {
       let queryInfo: any = { ...e }
       for (let i = 0; i < props.modelConfig!.formItem.length; i++) {
@@ -151,6 +158,7 @@ export default defineComponent({
             let trueVal = null
             //如果是数组 说明下拉是可以多选的
             if (Array.isArray(eField)) {
+              //拿到真正值
               let arr: any = []
               downSelectObj?.options?.forEach((item: any) => {
                 if (eField.indexOf(item.title) > -1) {
@@ -220,7 +228,6 @@ export default defineComponent({
           })
         }
         //编辑后还要去操作其他接口的
-        //debugger
         emit(
           'confirmClick',
           { ...props.defaultInfo, ...formData.value },
@@ -228,8 +235,8 @@ export default defineComponent({
         )
       } else {
         if (props.requestInfo?.add) {
-          let queryInfo = handleSelectProp(formData.value)
-          //debugger
+          let queryInfo = {...formData.value}
+          realValFromName(props.modelConfig,queryInfo)
           store.dispatch('system/createPageDataAction', {
             url: props.requestInfo!.add,
             requestInfo: props.requestInfo,
@@ -262,7 +269,9 @@ export default defineComponent({
       handleInClick,
       isBorrow,
       isReturn,
-      isModified
+      isModified,
+      curFormType,
+      modelFilterConfig//过滤是否能操作表单
     }
   }
 })

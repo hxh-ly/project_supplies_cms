@@ -4,14 +4,14 @@ function handleWorkRequest(fn: any, polyFill?: any) {
   //console.log(fn);
   return Promise.resolve(fn.call(null))
     .then((res) => {
-      console.log(res);
+      console.log(res)
       if (polyFill) {
         polyFill(res)
       }
       if (res.data && res.code == 200) {
         if (res.data.success) {
           ElMessage({
-            message: res.data?.info || res.data?.message ||res.message ,
+            message: res.data?.info || res.data?.message || res.message,
             icon: 'success',
             duration: 500
           })

@@ -125,7 +125,7 @@ import {
   reactive,
   inject,
   getCurrentInstance,
-  toRefs,
+  toRefs
 } from 'vue'
 
 import XhTable from '@/base-ui/table'
@@ -165,12 +165,12 @@ export default defineComponent({
     allPermissionBtn: {
       type: Array
     },
-    globalSearchData:{
-      type:Object,
-      default:()=>({})
+    globalSearchData: {
+      type: Object,
+      default: () => ({})
     },
-    queryCb:{
-      type:Function
+    queryCb: {
+      type: Function
     }
   },
   components: {
@@ -181,20 +181,24 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = userStore()
     const pageInfo = ref({ currentPage: 1, pageSize: 10 })
-    const that:any=getCurrentInstance()
-    watch(pageInfo, (newVal:any) => {
-      //拿到兄弟组件的值
-      let globalSearchData=that.parent?.refs?.pageSearchRef?.formData
-      let queryCb = props.queryCb
-      let searchData= {...newVal}
-      if(globalSearchData&&Object.keys(globalSearchData).length>0) {
-        searchData={...searchData,...globalSearchData}
-      }
-      if(queryCb) {
-        searchData=queryCb(searchData)
-      }
-      getPageData(searchData)
-    },{deep:true,immediate:false})
+    const that: any = getCurrentInstance()
+    watch(
+      pageInfo,
+      (newVal: any) => {
+        //拿到兄弟组件的值
+        let globalSearchData = that.parent?.refs?.pageSearchRef?.formData
+        let queryCb = props.queryCb
+        let searchData = { ...newVal }
+        if (globalSearchData && Object.keys(globalSearchData).length > 0) {
+          searchData = { ...searchData, ...globalSearchData }
+        }
+        if (queryCb) {
+          searchData = queryCb(searchData)
+        }
+        getPageData(searchData)
+      },
+      { deep: true, immediate: false }
+    )
     //2 发送网络请求
     const getPageData = (queryInfo: any = {}) => {
       if (props.isDgut) {

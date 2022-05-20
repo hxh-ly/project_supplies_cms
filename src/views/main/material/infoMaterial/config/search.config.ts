@@ -9,12 +9,6 @@ export const searchFormConfig: IForm = {
       placeholder: '请输入商品名字'
     },
     {
-      field: 'unitPrice',
-      type: 'input',
-      label: '物资单价',
-      placeholder: '请输入物资单价'
-    },
-    {
       field: 'model',
       type: 'input',
       label: '物资型号',
@@ -26,8 +20,8 @@ export const searchFormConfig: IForm = {
       label: '固定资产',
       placeholder: '请选择',
       options: [
-        { title: '是', value: '是', realVal: 0 },
-        { title: '否', value: '否', realVal: 1 }
+        { title: '是', value: '是', realVal: 1 },
+        { title: '否', value: '否', realVal: 0 }
       ]
     },
     {

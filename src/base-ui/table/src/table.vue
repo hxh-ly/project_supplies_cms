@@ -67,6 +67,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import bus from 'vue3-eventbus'
 export default defineComponent({
   components: {},
   props: {
@@ -115,6 +116,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const handleSelectionChange = (value: any) => {
       emit('emitSelectionChange', value)
+      bus.emit('foo', value)
     }
     //每页展示条数变了
     const handleSizeChange = (pageSize: number) => {

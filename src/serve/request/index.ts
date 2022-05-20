@@ -47,8 +47,8 @@ class HXHRequest {
     this.instance.interceptors.response.use(
       (res) => {
         //console.log('全局响应拦截-返回值 AxiosResponse')
-        const data = res.data
-        if (data.returnCode == '-1001') {
+        const data = res?.data
+        if (data&&data.returnCode == '-1001') {
           console.log('请求失败')
         } else {
           return data

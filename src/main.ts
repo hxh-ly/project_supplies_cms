@@ -8,7 +8,9 @@ import 'normalize.css'
 import './assets/css/index.less'
 import { setupStore } from '@/store'
 import registerGlobal from '@/global'
+import eventBus from 'vue3-eventbus'
 const app = createApp(App)
+app.use(eventBus)
 app.use(ElementPlus)
 app.use(store)
 setupStore()

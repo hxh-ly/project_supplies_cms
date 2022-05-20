@@ -2,14 +2,8 @@
 <template>
   <div class="borrow-box">
     <div class="form-box">
-      <xh-form
-        v-bind="modelFormConfigRef"
-        v-model="formData"
-        @resetFormConfigRef="handleResetValue"
-        @sendSave="handleConfirmClick"
-        :ruleForm="ruleForm"
-        ref="infoApplyFormRef"
-      >
+      <xh-form v-bind="modelFormConfigRef" v-model="formData" @resetFormConfigRef="handleResetValue"
+        @sendSave="handleConfirmClick" :ruleForm="ruleForm" ref="infoApplyFormRef">
         <template #header>
           <div class="header-title">物资登记</div>
         </template>
@@ -90,8 +84,8 @@ export default defineComponent({
         remark: '',
         projectTeamId: '',
         file: '',
-        photo:'',
-        upload:''
+        photo: '',
+        upload: ''
       }
     }
 
@@ -103,13 +97,15 @@ export default defineComponent({
       let projectFormItem = modelFormConfig.formItem.find(
         (item) => item.field == 'projectTeamId'
       )
-      projectFormItem!.options = store.state.entriesDepartment.map(
-        (pItem: any) => ({
-          title: pItem.name,
-          value: pItem.name,
-          realVal: pItem.projectTeamId
-        })
-      )
+      if (projectFormItem && store.state?.entriesDepartment) {
+        projectFormItem!.options = store.state.entriesDepartment.map(
+          (pItem: any) => ({
+            title: pItem.name,
+            value: pItem.name,
+            realVal: pItem.projectTeamId
+          })
+        )
+      }
       return modelFormConfig
     })
     const handleResetValue = () => {
@@ -123,16 +119,23 @@ export default defineComponent({
         ...formData.value,
         unitPrice: Number(formData.value.unitPrice),
         //type: 2,
-        gmtBought: formData.value.gmtBought? $filters.formatTime(formData.value.gmtBought):$filters.formatTime(new Date()),
-        gmtWarehoused: formData.value.gmtWarehoused? $filters.formatTime(formData.value.gmtWarehoused):$filters.formatTime(new Date())
+        gmtBought: formData.value.gmtBought
+          ? $filters.formatTime(formData.value.gmtBought)
+          : $filters.formatTime(new Date()),
+        gmtWarehoused: formData.value.gmtWarehoused
+          ? $filters.formatTime(formData.value.gmtWarehoused)
+          : $filters.formatTime(new Date())
       }
-      realValFromName( modelFormConfig ,formNeedData)
-     // console.log(formNeedData)
-     /*  infoApplyFormRef.value?.submitForm(
+      realValFromName(modelFormConfig, formNeedData)
+      // console.log(formNeedData)
+      /*  infoApplyFormRef.value?.submitForm(
         infoApplyFormRef.value?.elNativeFromRef,
         handleWorkRequest(()=>normalRequest('/material/input','post', formNeedData),()=>handleResetValue())
       ) */
-       handleWorkRequest(()=>normalRequest('/material/input','post', formNeedData),()=>handleResetValue())
+      handleWorkRequest(
+        () => normalRequest('/material/input', 'post', formNeedData),
+        () => handleResetValue()
+      )
     }
     return {
       infoApplyFormRef,
@@ -152,14 +155,17 @@ export default defineComponent({
   font-weight: 600;
   margin: 10px;
 }
+
 .borrow-box {
   display: flex;
   justify-content: center;
   width: 70vw;
 }
+
 .form-box {
   width: 66%;
 }
+
 .footer-btn {
   margin: 16px 0;
 }

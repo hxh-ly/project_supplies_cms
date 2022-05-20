@@ -78,7 +78,7 @@ export const dgutRequest = new HXHRequest({
     ]
   })
 } */
-export const normalRequest = async  (
+export const normalRequest = async (
   url: string,
   method: any = 'post',
   data: any
@@ -89,7 +89,7 @@ export const normalRequest = async  (
   }
   //console.log(formData)
   const token = localCache.getItem('token')
-  let instance = axios.create({
+  const instance = axios.create({
     baseURL: '/dgut',
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -102,8 +102,8 @@ export const normalRequest = async  (
       return config.data
     })
   })
-return   instance({
-    url:url,
+  return instance({
+    url: url,
     data: formData,
     method: method
   })

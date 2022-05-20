@@ -83,19 +83,12 @@ const store = createStore<IRootStore>({
         commit('changeEntriesPermissions', permissionsList)
         commit('changeEntriesRolePermissions',rolePermissions)
       } */
-      //所有物资
-      const materialResult = await dgut_getMaterialListData('/material/list', {
-        size: 50,
-        current: 1
-      })
-      const { records: materialList } = materialResult.data.list
-      commit('changeEntriesMaterial', materialList)
+
       //获取所有项目组
     },
     async changeTreeAction({ commit }, payload: any) {
       console.log('changeTreeAction', payload)
       commit('changeEntriesRolePermissions', payload.permissionLists)
-      //debugger
     }
   },
   modules: {

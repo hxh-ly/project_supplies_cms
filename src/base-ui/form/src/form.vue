@@ -31,7 +31,7 @@
               </template>
               <template v-else-if="item.type == 'numInput'">
                 <el-input-number
-                  :min="1"
+                  :min="0"
                   :max="999"
                   :placeholder="item.placeholder"
                   v-bind="item.otherOptions"
@@ -94,7 +94,10 @@
                     :key="meItem.id"
                     class="select-materials-list"
                   >
-                    <el-select
+                  <el-input  disabled class="select-box" :model-value="modelValue[`${item.field}`][index]['name']">
+
+                  </el-input>
+                  <!--   <el-select
                       class="select-box"
                       :model-value="modelValue[`${item.field}`][index]['id']"
                       @update:model-value="
@@ -107,15 +110,14 @@
                         :value="option.value"
                         >{{ option.title }}</el-option
                       >
-                    </el-select>
+                    </el-select> -->
                     <el-input-number
                       class="elect-box-num"
                       :min="1"
                       :max="999"
                       :model-value="modelValue[`${item.field}`][index]['num']"
                       @update:model-value="
-                        handleMaterialChange($event, item.field, index, 'num')
-                      "
+                        handleMaterialChange($event, item.field, index, 'num')"
                     ></el-input-number>
                     <span class="del-text" @click="delSelect(index)">删除</span>
                   </div>
@@ -136,7 +138,11 @@
                   :disabled="item.disable"
                   :auto-upload="true"
                 >
-                  <img v-if="modelValue[`${item.field}`]"  :src="modelValue[`${item.field}`]" class="avatar" />
+                  <img
+                    v-if="modelValue[`${item.field}`]"
+                    :src="modelValue[`${item.field}`]"
+                    class="avatar"
+                  />
                   <el-icon v-else class="avatar-uploader-icon">
                     <plus />
                   </el-icon>
@@ -206,7 +212,7 @@ export default defineComponent({
   emits: ['update:modelValue', 'resetFormConfigRef', 'delSelect'],
   setup(props, { emit }) {
     onMounted(() => {
-    /*   if('photo' in props!!.modelValue!!) {
+      /*   if('photo' in props!!.modelValue!!) {
         console.log('..... props.modelValue',props.modelValue)
       } */
     })
@@ -277,15 +283,15 @@ export default defineComponent({
     }
     //处理图片上传
     const beforeAvatarUpload: any = (rawFile: any) => {
-      if(rawFile) {
-      props.modelValue!.photo =  URL.createObjectURL(rawFile)
-      props.modelValue!.upload =  URL.createObjectURL(rawFile)
-      props.modelValue!.file = rawFile
+      if (rawFile) {
+        props.modelValue!.photo = URL.createObjectURL(rawFile)
+        props.modelValue!.upload = URL.createObjectURL(rawFile)
+        props.modelValue!.file = rawFile
       }
       return false
       // props.modelValue!.file = (fr.readAsArrayBuffer(rawFile) as any).result
     }
-     /*  watch(
+    /*  watch(
       () => props.modelValue?.photo,
       (newVal) => {
         console.log('是否有watch到',newVal);
@@ -307,7 +313,7 @@ export default defineComponent({
       downOptions,
       elNativeFromRef,
       submitForm,
-      beforeAvatarUpload,//上传图片
+      beforeAvatarUpload, //上传图片
       imageUrl
     }
   }
